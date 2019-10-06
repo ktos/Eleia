@@ -40,7 +40,7 @@ namespace Eleia
 {
     internal static class Program
     {
-        private const int TimeBetweenUpdates = 1;
+        private const int TimeBetweenUpdates = 60;
         private const int DelayBetweenTopicScrape = 2000;
 
         private static HashSet<string> analyzedTopics;
