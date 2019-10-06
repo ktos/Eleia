@@ -24,14 +24,7 @@ namespace Eleia
             analyzedTopics = new HashSet<string>();
             ignoredTopics = new HashSet<string>();
 
-            var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder
-                    .AddFilter("Microsoft", LogLevel.Warning)
-                    .AddFilter("System", LogLevel.Warning)
-                    .AddFilter("LoggingConsoleApp.Program", LogLevel.Debug)
-                    .AddConsole();
-            });
+            var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             logger = loggerFactory.CreateLogger("Eleia");
 
             logger.LogInformation("Eleia is running...");
