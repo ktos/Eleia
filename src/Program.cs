@@ -29,6 +29,7 @@
 
 #endregion License
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -59,6 +60,12 @@ namespace Eleia
             analyzed = new HashSet<int>();
 
             pa = new PostAnalyzer();
+
+            var config = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .Build();
+
+            //config.GetValue();
 
             var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             logger = loggerFactory.CreateLogger("Eleia");
