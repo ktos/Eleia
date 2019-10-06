@@ -29,12 +29,12 @@
 
 #endregion License
 
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace Eleia
 {
@@ -52,6 +52,7 @@ namespace Eleia
         private static void Main(string[] args)
         {
             hc = new HttpClient();
+            hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.1");
             analyzedTopics = new HashSet<string>();
             ignoredTopics = new HashSet<string>();
 
