@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Eleia
 {
@@ -15,12 +16,25 @@ namespace Eleia
         private static HashSet<string> ignoredTopics;
 
         private static HttpClient hc;
+        private static ILogger logger;
 
         private static void Main(string[] args)
         {
             hc = new HttpClient();
             analyzedTopics = new HashSet<string>();
             ignoredTopics = new HashSet<string>();
+
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                    .AddFilter("Microsoft", LogLevel.Warning)
+                    .AddFilter("System", LogLevel.Warning)
+                    .AddFilter("LoggingConsoleApp.Program", LogLevel.Debug)
+                    .AddConsole();
+            });
+            logger = loggerFactory.CreateLogger("Eleia");
+
+            logger.LogInformation("Eleia is running...");
 
             ignoredTopics.Add("https://4programmers.net/Forum/C_i_.NET/121282-Kursy_visual_c");
             ignoredTopics.Add("https://4programmers.net/Forum/C_i_.NET/160647-Materialy_dostepne_w_sieci");
@@ -36,6 +50,7 @@ namespace Eleia
 
         private static async void ScrapAndAnalyzeNew()
         {
+            logger.LogInformation("Getting new topics...");
             var newTopics = await GetNewTopics("https://4programmers.net/Forum/C_i_.NET?perPage=10");
             foreach (var topic in newTopics)
             {
@@ -54,6 +69,7 @@ namespace Eleia
 
             var html = await hc.GetStringAsync(url);
 
+            logger.LogInformation($"Analyzing topic {url}");
             TopicAnalyzer.Analyze(html);
         }
 
