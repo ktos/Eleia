@@ -1,0 +1,22 @@
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+trigger:
+- master
+
+pr:
+- master
+
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: restore
+
+- task: DotNetCoreCLI@2
+  displayName: Build
+  inputs:    
+    arguments: '--configuration $(BuildConfiguration)'
