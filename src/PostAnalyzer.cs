@@ -38,43 +38,74 @@ using System.Text.RegularExpressions;
 
 namespace Eleia
 {
-    internal static class TopicAnalyzer
+    /// <summary>
+    /// Represents any possible problem with a post, like unformatted code,
+    /// bad title, bad tags and so on
+    /// </summary>
+    public abstract class PostProblems
     {
-        public static void Analyze(string html)
+        public float Probability { get; set; }
+    }
+
+    /// <summary>
+    /// Represents that a class has a not formatted code somewhere
+    /// </summary>
+    public class NotFormattedCodeFound : PostProblems
+    {
+        public override string ToString()
         {
-            var hap = new HtmlAgilityPack.HtmlDocument();
-            hap.LoadHtml(html);
-            var allPosts = hap.DocumentNode.SelectNodes("//div[@data-post-id]");
+            return $"Potentially not formatted code found (prob: {Probability})";
+        }
+    }
 
-            var posts = new Dictionary<string, List<string>>();
+    /// <summary>
+    /// Analyzes the post on the Coyote forum in search of problems
+    /// </summary>
+    public class PostAnalyzer
+    {
+        private const double CodeDetectorTreshold = 0.995;
+        private CodeDetector codeDetector;
 
-            foreach (var item in allPosts)
+        /// <summary>
+        /// Creates a new instance of PostAnalyzer, loads all detectors used
+        /// in analyze process
+        /// </summary>
+        public PostAnalyzer()
+        {
+            codeDetector = new CodeDetector();
+        }
+
+        /// <summary>
+        /// Analyzes a single post in search of problems
+        /// </summary>
+        /// <param name="post">Post to be analyzed, in the form of object from the API</param>
+        /// <returns>List of possible problems found, with their probabilities</returns>
+        public List<PostProblems> Analyze(CoyoteApi.Post post)
+        {
+            var output = new List<PostProblems>();
+            var unformatted = CheckForUnformattedCode(post);
+
+            if (unformatted != null) output.Add(unformatted);
+
+            return output;
+        }
+
+        private NotFormattedCodeFound CheckForUnformattedCode(CoyoteApi.Post post)
+        {
+            var text = RemoveHtmlContent(post.text);
+            var paragraphs = CleanParagraph(text.Split("</p>").ToList());
+
+            foreach (var para in paragraphs)
             {
-                var postId = item.Attributes["data-post-id"].Value;
-                var postContent = item.InnerHtml.Replace("\r", string.Empty);
-                postContent = RemoveHtmlContent(postContent);
+                var result = codeDetector.Predict(para);
 
-                var postParagraphs = CleanParagraph(postContent.Split("</p>").ToList());
-                posts.Add(postId, postParagraphs);
-            }
-
-            foreach (var post in posts)
-            {
-                foreach (var item in post.Value)
+                if (result.Prediction == "code" && result.Score[1] > CodeDetectorTreshold)
                 {
-                    var input = new ModelInput();
-                    input.Content = item;
-
-                    ModelOutput result = ConsumeModel.Predict(input);
-
-                    if (result.Prediction == "code" && result.Score[1] > 0.9)
-                    {
-                        Console.WriteLine($"Potentially not formatted code found in {post.Key} (prob: {result.Score[1]}): ");
-                        Console.WriteLine(item);
-                        break;
-                    }
+                    return new NotFormattedCodeFound { Probability = result.Score[1] };
                 }
             }
+
+            return null;
         }
 
         private static string RemoveHtmlContent(string posttext)

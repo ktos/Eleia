@@ -29,28 +29,13 @@
 
 #endregion License
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Eleia
+namespace Eleia.CoyoteApi
 {
-    internal static class SubforumAnalyzer
+    public static class Endpoints
     {
-        public static List<string> GetTopics(string html)
-        {
-            var output = new List<string>();
-            var hap = new HtmlAgilityPack.HtmlDocument();
-            hap.LoadHtml(html);
-
-            var topics = hap.DocumentNode.SelectNodes("//h5/a");
-
-            foreach (var item in topics)
-            {
-                output.Add(item.Attributes["href"].Value);
-            }
-
-            return output;
-        }
+        /// <summary>
+        /// Coyote API endpoint for getting new posts
+        /// </summary>
+        public const string PostsApi = "https://api.4programmers.net/v1/posts";
     }
 }
