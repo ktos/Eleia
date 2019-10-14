@@ -33,6 +33,9 @@ using Microsoft.ML.Data;
 
 namespace Eleia.ML
 {
+    /// <summary>
+    /// Output data from a ML classificator
+    /// </summary>
     public class CodeDetectorModelOutput
     {
         // ColumnName attribute is used to change the column name from

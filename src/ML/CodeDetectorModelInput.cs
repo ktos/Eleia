@@ -33,6 +33,9 @@ using Microsoft.ML.Data;
 
 namespace Eleia.ML
 {
+    /// <summary>
+    /// Model representing input data for a ML model
+    /// </summary>
     public class CodeDetectorModelInput
     {
         [ColumnName("type"), LoadColumn(0)]

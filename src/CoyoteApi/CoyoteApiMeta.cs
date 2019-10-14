@@ -31,6 +31,8 @@
 
 namespace Eleia.CoyoteApi
 {
+#pragma warning disable IDE1006 // Naming Styles
+
     public class Links
     {
         public string first { get; set; }
@@ -49,4 +51,6 @@ namespace Eleia.CoyoteApi
         public int to { get; set; }
         public int total { get; set; }
     }
+
+#pragma warning restore IDE1006 // Naming Styles
 }

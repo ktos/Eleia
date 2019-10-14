@@ -33,6 +33,8 @@ using System;
 
 namespace Eleia.CoyoteApi
 {
+#pragma warning disable IDE1006 // Naming Styles
+
     public class PostsApiResult
     {
         public Post[] data { get; set; }
@@ -60,4 +62,6 @@ namespace Eleia.CoyoteApi
         public string name { get; set; }
         public string photo { get; set; }
     }
+
+#pragma warning restore IDE1006 // Naming Styles
 }

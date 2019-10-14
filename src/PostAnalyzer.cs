@@ -38,12 +38,19 @@ using System.Text.RegularExpressions;
 
 namespace Eleia
 {
-    public abstract class PostAnalyzerOutput
+    /// <summary>
+    /// Represents any possible problem with a post, like unformatted code,
+    /// bad title, bad tags and so on
+    /// </summary>
+    public abstract class PostProblems
     {
         public float Probability { get; set; }
     }
 
-    public class NotFormattedCodeFound : PostAnalyzerOutput
+    /// <summary>
+    /// Represents that a class has a not formatted code somewhere
+    /// </summary>
+    public class NotFormattedCodeFound : PostProblems
     {
         public override string ToString()
         {
@@ -51,38 +58,54 @@ namespace Eleia
         }
     }
 
+    /// <summary>
+    /// Analyzes the post on the Coyote forum in search of problems
+    /// </summary>
     public class PostAnalyzer
     {
         private const double CodeDetectorTreshold = 0.995;
         private CodeDetector codeDetector;
 
+        /// <summary>
+        /// Creates a new instance of PostAnalyzer, loads all detectors used
+        /// in analyze process
+        /// </summary>
         public PostAnalyzer()
         {
             codeDetector = new CodeDetector();
         }
 
-        public List<PostAnalyzerOutput> Analyze(CoyoteApi.Post post)
+        /// <summary>
+        /// Analyzes a single post in search of problems
+        /// </summary>
+        /// <param name="post">Post to be analyzed, in the form of object from the API</param>
+        /// <returns>List of possible problems found, with their probabilities</returns>
+        public List<PostProblems> Analyze(CoyoteApi.Post post)
         {
-            var output = new List<PostAnalyzerOutput>();
+            var output = new List<PostProblems>();
+            var unformatted = CheckForUnformattedCode(post);
 
+            if (unformatted != null) output.Add(unformatted);
+
+            return output;
+        }
+
+        private NotFormattedCodeFound CheckForUnformattedCode(CoyoteApi.Post post)
+        {
             var text = RemoveHtmlContent(post.text);
             var paragraphs = CleanParagraph(text.Split("</p>").ToList());
 
             foreach (var para in paragraphs)
             {
-                var input = new CodeDetectorModelInput();
-                input.Content = para;
-
-                var result = codeDetector.Predict(input);
+                var result = codeDetector.Predict(para);
 
                 if (result.Prediction == "code" && result.Score[1] > CodeDetectorTreshold)
                 {
-                    output.Add(new NotFormattedCodeFound { Probability = result.Score[1] });
-                    break;
+                    return new NotFormattedCodeFound { Probability = result.Score[1] };
                 }
             }
 
-            return output;
+            return null;
         }
 
         private static string RemoveHtmlContent(string posttext)

@@ -34,11 +34,17 @@ using System;
 
 namespace Eleia.ML
 {
+    /// <summary>
+    /// Performs detection of the code in post using ML
+    /// </summary>
     public class CodeDetector
     {
         private MLContext mlContext;
         private PredictionEngine<CodeDetectorModelInput, CodeDetectorModelOutput> predEngine;
 
+        /// <summary>
+        /// Creates a new instance of CodeDetector, loads ML model into RAM
+        /// </summary>
         public CodeDetector()
         {
             mlContext = new MLContext();
@@ -47,8 +53,16 @@ namespace Eleia.ML
             predEngine = mlContext.Model.CreatePredictionEngine<CodeDetectorModelInput, CodeDetectorModelOutput>(mlModel);
         }
 
-        public CodeDetectorModelOutput Predict(CodeDetectorModelInput input)
+        /// <summary>
+        /// Performs classification if the provided text paragraph is a code or a text
+        /// </summary>
+        /// <param name="text">Text paragraph to classify</param>
+        /// <returns>Is it a text or a code and with what probability</returns>
+        public CodeDetectorModelOutput Predict(string text)
         {
+            var input = new CodeDetectorModelInput();
+            input.Content = text;
+
             return predEngine.Predict(input);
         }
     }
