@@ -92,8 +92,8 @@ namespace Eleia
 
         private NotFormattedCodeFound CheckForUnformattedCode(CoyoteApi.Post post)
         {
-            var text = RemoveHtmlContent(post.text);
-            var paragraphs = CleanParagraph(text.Split("</p>").ToList());
+            var text = HtmlCleaner.RemoveProperCode(post.text);
+            var paragraphs = HtmlCleaner.CleanParagraphs(text.Split("</p>").ToList());
 
             foreach (var para in paragraphs)
             {
@@ -106,37 +106,6 @@ namespace Eleia
             }
 
             return null;
-        }
-
-        private static string RemoveHtmlContent(string posttext)
-        {
-            // removing every code properly put in the <code> or <pre><code class=""> tags
-            posttext = Regex.Replace(posttext, "<pre><code(.|\n)*?</pre>", "", RegexOptions.Multiline);
-            posttext = Regex.Replace(posttext, "<code(.|\n)*?</code>", "", RegexOptions.Multiline);
-
-            // removing every link to attachment download
-            posttext = Regex.Replace(posttext, "<i class=\"fa fa-download(.|\n)*?</li>", "", RegexOptions.Multiline);
-            return posttext;
-        }
-
-        private static List<string> CleanParagraph(List<string> paras)
-        {
-            var output = new List<string>();
-
-            foreach (var item in paras)
-            {
-                // strip tags
-                var cleaned = Regex.Replace(item, "<.*?>", string.Empty);
-
-                // strip multi spaces, new lines and everything what is empty
-                cleaned = cleaned.Replace("\n", "");
-                cleaned = Regex.Replace(cleaned, @"\s+", " ").Trim();
-
-                if (!string.IsNullOrWhiteSpace(cleaned))
-                    output.Add(cleaned);
-            }
-
-            return output;
         }
     }
 }
