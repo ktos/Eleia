@@ -48,7 +48,7 @@ namespace Eleia
         /// <returns>Post content with Pre and Code elements removed</returns>
         public static string RemoveProperCode(string postText)
         {
-            postText = Regex.Replace(postText, "<pre><code(.|\n)*?</pre>", "", RegexOptions.Multiline);
+            postText = Regex.Replace(postText, "<pre><code(.|\n)*?</code></pre>", "", RegexOptions.Multiline);
             postText = Regex.Replace(postText, "<code(.|\n)*?</code>", "", RegexOptions.Multiline);
             return postText;
         }
