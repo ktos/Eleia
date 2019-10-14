@@ -39,6 +39,7 @@ using System.Threading.Tasks;
 
 namespace Eleia
 {
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     internal static class Program
     {
         private const int TimeBetweenUpdates = 60;

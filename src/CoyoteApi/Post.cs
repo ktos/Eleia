@@ -58,6 +58,7 @@ namespace Eleia.CoyoteApi
         public string url { get; set; }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class User
     {
         public int id { get; set; }
