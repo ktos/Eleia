@@ -4,7 +4,7 @@ using Microsoft.ML.Data;
 
 namespace Eleia.ML
 {
-    public class ModelOutput
+    public class CodeDetectorModelOutput
     {
         // ColumnName attribute is used to change the column name from
         // its default value, which is the name of the field.

@@ -4,7 +4,7 @@ using Microsoft.ML.Data;
 
 namespace Eleia.ML
 {
-    public class ModelInput
+    public class CodeDetectorModelInput
     {
         [ColumnName("type"), LoadColumn(0)]
         public string Type { get; set; }

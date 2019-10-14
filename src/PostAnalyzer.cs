@@ -51,9 +51,17 @@ namespace Eleia
         }
     }
 
-    public static class PostAnalyzer
+    public class PostAnalyzer
     {
-        public static List<PostAnalyzerOutput> Analyze(CoyoteApi.Post post)
+        private const double CodeDetectorTreshold = 0.995;
+        private CodeDetector codeDetector;
+
+        public PostAnalyzer()
+        {
+            codeDetector = new CodeDetector();
+        }
+
+        public List<PostAnalyzerOutput> Analyze(CoyoteApi.Post post)
         {
             var output = new List<PostAnalyzerOutput>();
 
@@ -62,12 +70,12 @@ namespace Eleia
 
             foreach (var para in paragraphs)
             {
-                var input = new ModelInput();
+                var input = new CodeDetectorModelInput();
                 input.Content = para;
 
-                ModelOutput result = ConsumeModel.Predict(input);
+                var result = codeDetector.Predict(input);
 
-                if (result.Prediction == "code" && result.Score[1] > 0.9)
+                if (result.Prediction == "code" && result.Score[1] > CodeDetectorTreshold)
                 {
                     output.Add(new NotFormattedCodeFound { Probability = result.Score[1] });
                     break;

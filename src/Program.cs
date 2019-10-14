@@ -49,11 +49,15 @@ namespace Eleia
         private static HttpClient hc;
         private static ILogger logger;
 
+        private static PostAnalyzer pa;
+
         private static void Main(string[] args)
         {
             hc = new HttpClient();
             hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.1");
             analyzed = new HashSet<int>();
+
+            pa = new PostAnalyzer();
 
             var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             logger = loggerFactory.CreateLogger("Eleia");
@@ -76,8 +80,6 @@ namespace Eleia
             {
                 logger.LogInformation("Analyzing post {0}", post.id);
                 AnalyzePost(post);
-
-                await Task.Delay(DelayBetweenTopicScrape);
             }
         }
 
@@ -87,7 +89,7 @@ namespace Eleia
                 return;
 
             analyzed.Add(post.id);
-            var problems = PostAnalyzer.Analyze(post);
+            var problems = pa.Analyze(post);
 
             if (problems.Count > 0)
             {
