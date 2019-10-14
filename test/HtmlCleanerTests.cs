@@ -29,7 +29,7 @@ namespace Eleia.Test
         [Fact]
         public void StripTags_TextWithTags_TagsRemoved()
         {
-            string item = "<p>some</p><b>text</b><strong>with</strong><a href=\"#\">tags</a>";
+            string item = "<p>some</p><b>text</b><strong>with</strong><a href=\"#\">tags</a><br /><br/>";
 
             var result = HtmlCleaner.StripTags(item);
 
@@ -39,7 +39,7 @@ namespace Eleia.Test
         [Fact]
         public void StripTags_TextWithTagsNotClosed_TagsRemoved()
         {
-            string item = "<p></p></a></code></i><li><ul><ol></li>";
+            string item = "<p></p></a></code></i><li><ul><ol></li><br /><br/>";
 
             var result = HtmlCleaner.StripTags(item);
 
