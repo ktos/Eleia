@@ -36,37 +36,55 @@ using System.Text.RegularExpressions;
 
 namespace Eleia
 {
+    /// <summary>
+    /// Removes elements from HTML code of a post which are not needed by analyzers
+    /// </summary>
     public static class HtmlCleaner
     {
+        /// <summary>
+        /// Removes properly formatted code from a post (with &lt;code&gt; tag)
+        /// </summary>
+        /// <param name="postText">Post content to be cleaned (in HTML)</param>
+        /// <returns>Post content with Pre and Code elements removed</returns>
         public static string RemoveProperCode(string postText)
         {
-            // removing every code properly put in the <code> or <pre><code class=""> tags
             postText = Regex.Replace(postText, "<pre><code(.|\n)*?</pre>", "", RegexOptions.Multiline);
             postText = Regex.Replace(postText, "<code(.|\n)*?</code>", "", RegexOptions.Multiline);
+            return postText;
+        }
 
-            // removing every link to attachment download
+        /// <summary>
+        /// Removes links to downloading attachements
+        /// </summary>
+        /// <param name="postText">Post content to be cleaned (in HTML)</param>
+        /// <returns>Post content without links to post attachments</returns>
+        public static string RemoveDownloadLinks(string postText)
+        {
             postText = Regex.Replace(postText, "<i class=\"fa fa-download(.|\n)*?</li>", "", RegexOptions.Multiline);
             return postText;
         }
 
-        public static List<string> CleanParagraphs(List<string> paras)
+        /// <summary>
+        /// Removes all HTML tags
+        /// </summary>
+        /// <param name="item">String with HTML tags</param>
+        /// <returns>String without HTML tags</returns>
+        public static string StripTags(string item)
         {
-            var output = new List<string>();
+            return Regex.Replace(item, "<.*?>", string.Empty);
+        }
 
-            foreach (var item in paras)
-            {
-                // strip tags
-                var cleaned = Regex.Replace(item, "<.*?>", string.Empty);
+        /// <summary>
+        /// Removes whitespace (\n, any space more than once) from string and trims it
+        /// </summary>
+        /// <param name="item">String with whitespace</param>
+        /// <returns>Trimmed string without whitespace</returns>
+        public static string StripWhitespace(string item)
+        {
+            var cleaned = item.Replace("\n", "");
+            cleaned = Regex.Replace(cleaned, @"\s+", " ").Trim();
 
-                // strip multi spaces, new lines and everything what is empty
-                cleaned = cleaned.Replace("\n", "");
-                cleaned = Regex.Replace(cleaned, @"\s+", " ").Trim();
-
-                if (!string.IsNullOrWhiteSpace(cleaned))
-                    output.Add(cleaned);
-            }
-
-            return output;
+            return cleaned;
         }
     }
 }

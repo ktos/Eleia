@@ -93,9 +93,9 @@ namespace Eleia
         private NotFormattedCodeFound CheckForUnformattedCode(CoyoteApi.Post post)
         {
             var text = HtmlCleaner.RemoveProperCode(post.text);
-            var paragraphs = HtmlCleaner.CleanParagraphs(text.Split("</p>").ToList());
+            text = HtmlCleaner.RemoveDownloadLinks(text);
 
-            foreach (var para in paragraphs)
+            foreach (var para in text.Split("</p>").Select(CleanParagraph))
             {
                 var result = codeDetector.Predict(para);
 
@@ -106,6 +106,12 @@ namespace Eleia
             }
 
             return null;
+        }
+
+        private string CleanParagraph(string item)
+        {
+            var cleaned = HtmlCleaner.StripTags(item);
+            return HtmlCleaner.StripWhitespace(cleaned);
         }
     }
 }
