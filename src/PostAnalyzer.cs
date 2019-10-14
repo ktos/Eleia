@@ -39,26 +39,6 @@ using System.Text.RegularExpressions;
 namespace Eleia
 {
     /// <summary>
-    /// Represents any possible problem with a post, like unformatted code,
-    /// bad title, bad tags and so on
-    /// </summary>
-    public abstract class PostProblems
-    {
-        public float Probability { get; set; }
-    }
-
-    /// <summary>
-    /// Represents that a class has a not formatted code somewhere
-    /// </summary>
-    public class NotFormattedCodeFound : PostProblems
-    {
-        public override string ToString()
-        {
-            return $"Potentially not formatted code found (prob: {Probability})";
-        }
-    }
-
-    /// <summary>
     /// Analyzes the post on the Coyote forum in search of problems
     /// </summary>
     public class PostAnalyzer
@@ -92,10 +72,10 @@ namespace Eleia
 
         private NotFormattedCodeFound CheckForUnformattedCode(CoyoteApi.Post post)
         {
-            var text = RemoveHtmlContent(post.text);
-            var paragraphs = CleanParagraph(text.Split("</p>").ToList());
+            var text = HtmlCleaner.RemoveProperCode(post.text);
+            text = HtmlCleaner.RemoveDownloadLinks(text);
 
-            foreach (var para in paragraphs)
+            foreach (var para in text.Split("</p>").Select(CleanParagraph))
             {
                 var result = codeDetector.Predict(para);
 
@@ -108,35 +88,10 @@ namespace Eleia
             return null;
         }
 
-        private static string RemoveHtmlContent(string posttext)
+        private string CleanParagraph(string item)
         {
-            // removing every code properly put in the <code> or <pre><code class=""> tags
-            posttext = Regex.Replace(posttext, "<pre><code(.|\n)*?</pre>", "", RegexOptions.Multiline);
-            posttext = Regex.Replace(posttext, "<code(.|\n)*?</code>", "", RegexOptions.Multiline);
-
-            // removing every link to attachment download
-            posttext = Regex.Replace(posttext, "<i class=\"fa fa-download(.|\n)*?</li>", "", RegexOptions.Multiline);
-            return posttext;
-        }
-
-        private static List<string> CleanParagraph(List<string> paras)
-        {
-            var output = new List<string>();
-
-            foreach (var item in paras)
-            {
-                // strip tags
-                var cleaned = Regex.Replace(item, "<.*?>", string.Empty);
-
-                // strip multi spaces, new lines and everything what is empty
-                cleaned = cleaned.Replace("\n", "");
-                cleaned = Regex.Replace(cleaned, @"\s+", " ").Trim();
-
-                if (!string.IsNullOrWhiteSpace(cleaned))
-                    output.Add(cleaned);
-            }
-
-            return output;
+            var cleaned = HtmlCleaner.StripTags(item);
+            return HtmlCleaner.StripWhitespace(cleaned);
         }
     }
 }
