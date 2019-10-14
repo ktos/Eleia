@@ -93,11 +93,13 @@ namespace Eleia
 
             if (problems.Count > 0)
             {
-                Console.WriteLine("Problems found in post id: {0}", post.id);
+                Console.WriteLine("Problems found!");
                 foreach (var item in problems)
                 {
                     Console.WriteLine(item.ToString());
                 }
+                Console.WriteLine(post.url);
+                Console.WriteLine(post.text.Length < 50 ? post.text : post.text.Substring(0, 50));
             }
         }
 
