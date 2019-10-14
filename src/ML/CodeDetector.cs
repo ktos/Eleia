@@ -37,6 +37,7 @@ namespace Eleia.ML
     /// <summary>
     /// Performs detection of the code in post using ML
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class CodeDetector
     {
         private MLContext mlContext;

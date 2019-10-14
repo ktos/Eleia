@@ -28,3 +28,4 @@ steps:
   inputs:
     command: 'test'
     projects: 'test/*.csproj'
+    arguments: '--collect:"XPlat Code Coverage"'

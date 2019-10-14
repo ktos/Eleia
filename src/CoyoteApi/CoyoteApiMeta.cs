@@ -33,6 +33,7 @@ namespace Eleia.CoyoteApi
 {
 #pragma warning disable IDE1006 // Naming Styles
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Links
     {
         public string first { get; set; }
@@ -41,6 +42,7 @@ namespace Eleia.CoyoteApi
         public string next { get; set; }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Meta
     {
         public int current_page { get; set; }

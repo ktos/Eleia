@@ -36,6 +36,7 @@ namespace Eleia.ML
     /// <summary>
     /// Model representing input data for a ML model
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class CodeDetectorModelInput
     {
         [ColumnName("type"), LoadColumn(0)]

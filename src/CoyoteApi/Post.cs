@@ -35,6 +35,7 @@ namespace Eleia.CoyoteApi
 {
 #pragma warning disable IDE1006 // Naming Styles
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class PostsApiResult
     {
         public Post[] data { get; set; }
@@ -42,6 +43,7 @@ namespace Eleia.CoyoteApi
         public Meta meta { get; set; }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Post
     {
         public int id { get; set; }

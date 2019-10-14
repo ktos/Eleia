@@ -36,6 +36,7 @@ namespace Eleia.ML
     /// <summary>
     /// Output data from a ML classificator
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class CodeDetectorModelOutput
     {
         // ColumnName attribute is used to change the column name from
