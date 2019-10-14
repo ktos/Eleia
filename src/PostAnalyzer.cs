@@ -38,43 +38,43 @@ using System.Text.RegularExpressions;
 
 namespace Eleia
 {
-    internal static class TopicAnalyzer
+    public abstract class PostAnalyzerOutput
     {
-        public static void Analyze(string html)
+        public float Probability { get; set; }
+    }
+
+    public class NotFormattedCodeFound : PostAnalyzerOutput
+    {
+        public override string ToString()
         {
-            var hap = new HtmlAgilityPack.HtmlDocument();
-            hap.LoadHtml(html);
-            var allPosts = hap.DocumentNode.SelectNodes("//div[@data-post-id]");
+            return $"Potentially not formatted code found (prob: {Probability})";
+        }
+    }
 
-            var posts = new Dictionary<string, List<string>>();
+    public static class PostAnalyzer
+    {
+        public static List<PostAnalyzerOutput> Analyze(CoyoteApi.Post post)
+        {
+            var output = new List<PostAnalyzerOutput>();
 
-            foreach (var item in allPosts)
+            var text = RemoveHtmlContent(post.text);
+            var paragraphs = CleanParagraph(text.Split("</p>").ToList());
+
+            foreach (var para in paragraphs)
             {
-                var postId = item.Attributes["data-post-id"].Value;
-                var postContent = item.InnerHtml.Replace("\r", string.Empty);
-                postContent = RemoveHtmlContent(postContent);
+                var input = new ModelInput();
+                input.Content = para;
 
-                var postParagraphs = CleanParagraph(postContent.Split("</p>").ToList());
-                posts.Add(postId, postParagraphs);
-            }
+                ModelOutput result = ConsumeModel.Predict(input);
 
-            foreach (var post in posts)
-            {
-                foreach (var item in post.Value)
+                if (result.Prediction == "code" && result.Score[1] > 0.9)
                 {
-                    var input = new ModelInput();
-                    input.Content = item;
-
-                    ModelOutput result = ConsumeModel.Predict(input);
-
-                    if (result.Prediction == "code" && result.Score[1] > 0.9)
-                    {
-                        Console.WriteLine($"Potentially not formatted code found in {post.Key} (prob: {result.Score[1]}): ");
-                        Console.WriteLine(item);
-                        break;
-                    }
+                    output.Add(new NotFormattedCodeFound { Probability = result.Score[1] });
+                    break;
                 }
             }
+
+            return output;
         }
 
         private static string RemoveHtmlContent(string posttext)

@@ -30,6 +30,7 @@
 #endregion License
 
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -43,8 +44,7 @@ namespace Eleia
         private const int TimeBetweenUpdates = 60;
         private const int DelayBetweenTopicScrape = 2000;
 
-        private static HashSet<string> analyzedTopics;
-        private static HashSet<string> ignoredTopics;
+        private static HashSet<int> analyzed;
 
         private static HttpClient hc;
         private static ILogger logger;
@@ -53,18 +53,12 @@ namespace Eleia
         {
             hc = new HttpClient();
             hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.1");
-            analyzedTopics = new HashSet<string>();
-            ignoredTopics = new HashSet<string>();
+            analyzed = new HashSet<int>();
 
             var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             logger = loggerFactory.CreateLogger("Eleia");
 
             logger.LogInformation("Eleia is running...");
-
-            ignoredTopics.Add("https://4programmers.net/Forum/C_i_.NET/121282-Kursy_visual_c");
-            ignoredTopics.Add("https://4programmers.net/Forum/C_i_.NET/160647-Materialy_dostepne_w_sieci");
-            ignoredTopics.Add("https://4programmers.net/Forum/C_i_.NET/192417-darmowe_pluginy_do_visual_studio_");
-            ignoredTopics.Add("https://4programmers.net/Forum/C_i_.NET/196733-o_naduzywaniu_c++cli");
 
             while (true)
             {
@@ -75,44 +69,42 @@ namespace Eleia
 
         private static async void ScrapAndAnalyzeNew()
         {
-            logger.LogInformation("Getting new topics...");
-            var newTopics = await GetNewTopics("https://4programmers.net/Forum/C_i_.NET?perPage=10");
-            foreach (var topic in newTopics)
+            logger.LogInformation("Getting new posts...");
+            var newposts = await GetNewPosts();
+
+            foreach (var post in newposts)
             {
-                AnalyzeTopic(topic);
+                logger.LogInformation("Analyzing post {0}", post.id);
+                AnalyzePost(post);
 
                 await Task.Delay(DelayBetweenTopicScrape);
             }
         }
 
-        private static async void AnalyzeTopic(string url)
+        private static void AnalyzePost(CoyoteApi.Post post)
         {
-            if (analyzedTopics.Contains(url))
+            if (analyzed.Contains(post.id))
                 return;
 
-            analyzedTopics.Add(url);
+            analyzed.Add(post.id);
+            var problems = PostAnalyzer.Analyze(post);
 
-            var html = await hc.GetStringAsync(url);
-
-            logger.LogInformation($"Analyzing topic {url}");
-            TopicAnalyzer.Analyze(html);
-        }
-
-        private static async Task<List<string>> GetNewTopics(string url)
-        {
-            var output = new List<string>();
-
-            var html = await hc.GetStringAsync(url);
-
-            foreach (var topicUrl in SubforumAnalyzer.GetTopics(html))
+            if (problems.Count > 0)
             {
-                if (!analyzedTopics.Contains(topicUrl) && !ignoredTopics.Contains(topicUrl))
+                Console.WriteLine("Problems found in post id: {0}", post.id);
+                foreach (var item in problems)
                 {
-                    output.Add(topicUrl);
+                    Console.WriteLine(item.ToString());
                 }
             }
+        }
 
-            return output;
+        private static async Task<IEnumerable<CoyoteApi.Post>> GetNewPosts()
+        {
+            var json = await hc.GetStringAsync(CoyoteApi.Endpoints.PostsApi);
+            var result = JsonConvert.DeserializeObject<CoyoteApi.PostsApiResult>(json);
+
+            return result.data;
         }
     }
 }
