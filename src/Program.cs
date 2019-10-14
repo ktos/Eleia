@@ -54,7 +54,7 @@ namespace Eleia
         private static void Main(string[] args)
         {
             hc = new HttpClient();
-            hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.1");
+            hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.2");
             analyzed = new HashSet<int>();
 
             pa = new PostAnalyzer();
@@ -66,17 +66,17 @@ namespace Eleia
 
             while (true)
             {
-                ScrapAndAnalyzeNew();
+                AnalyzeNewPosts();
                 Thread.Sleep(TimeSpan.FromMinutes(TimeBetweenUpdates));
             }
         }
 
-        private static async void ScrapAndAnalyzeNew()
+        private static async void AnalyzeNewPosts()
         {
-            logger.LogInformation("Getting new posts...");
-            var newposts = await GetNewPosts();
+            logger.LogInformation("Getting posts...");
+            var posts = await GetPosts();
 
-            foreach (var post in newposts)
+            foreach (var post in posts)
             {
                 logger.LogInformation("Analyzing post {0}", post.id);
                 AnalyzePost(post);
@@ -101,7 +101,7 @@ namespace Eleia
             }
         }
 
-        private static async Task<IEnumerable<CoyoteApi.Post>> GetNewPosts()
+        private static async Task<IEnumerable<CoyoteApi.Post>> GetPosts()
         {
             var json = await hc.GetStringAsync(CoyoteApi.Endpoints.PostsApi);
             var result = JsonConvert.DeserializeObject<CoyoteApi.PostsApiResult>(json);
