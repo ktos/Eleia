@@ -29,3 +29,10 @@ steps:
     command: 'test'
     projects: 'test/*.csproj'
     arguments: '--collect:"XPlat Code Coverage"'
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: 'test/TestResults/*/coverage.cobertura.xml'
+    pathToSources: 'src/'
+    reportDirectory: 'report/'
