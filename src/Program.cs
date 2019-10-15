@@ -29,6 +29,8 @@
 
 #endregion License
 
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.CommandLine;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -57,6 +59,15 @@ namespace Eleia
             hc = new HttpClient();
             hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.2");
             analyzed = new HashSet<int>();
+
+            var config = new ConfigurationBuilder()
+                .AddEnvironmentVariables("ELEIA")
+                .AddCommandLine(args)
+                .Build();
+
+            var username = config.GetValue<string>("username");
+            var password = config.GetValue<string>("password");
+            var threshold = config.GetValue<float>("threshold");
 
             pa = new PostAnalyzer();
 
