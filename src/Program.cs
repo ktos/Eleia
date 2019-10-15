@@ -29,6 +29,7 @@
 
 #endregion License
 
+using Eleia.CoyoteApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.CommandLine;
 using Microsoft.Extensions.Logging;
@@ -44,8 +45,7 @@ namespace Eleia
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     internal static class Program
     {
-        private const int TimeBetweenUpdates = 60;
-        private const int DelayBetweenTopicScrape = 2000;
+        private static int timeBetweenUpdates = 60;
 
         private static HashSet<int> analyzed;
 
@@ -53,11 +53,12 @@ namespace Eleia
         private static ILogger logger;
 
         private static PostAnalyzer pa;
+        private static CoyoteHandler ch;
 
         private static void Main(string[] args)
         {
             hc = new HttpClient();
-            hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.2");
+            hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.3");
             analyzed = new HashSet<int>();
 
             var config = new ConfigurationBuilder()
@@ -68,8 +69,12 @@ namespace Eleia
             var username = config.GetValue<string>("username");
             var password = config.GetValue<string>("password");
             var threshold = config.GetValue<float>("threshold");
+            timeBetweenUpdates = config.GetValue<int>("timeBetweenUpdates");
 
             pa = new PostAnalyzer();
+
+            ch = new CoyoteHandler();
+            ch.Login(username, password).Wait();
 
             var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
             logger = loggerFactory.CreateLogger("Eleia");
@@ -79,7 +84,7 @@ namespace Eleia
             while (true)
             {
                 AnalyzeNewPosts();
-                Thread.Sleep(TimeSpan.FromMinutes(TimeBetweenUpdates));
+                Thread.Sleep(TimeSpan.FromMinutes(timeBetweenUpdates));
             }
         }
 
@@ -91,11 +96,11 @@ namespace Eleia
             foreach (var post in posts)
             {
                 logger.LogInformation("Analyzing post {0}", post.id);
-                AnalyzePost(post);
+                await AnalyzePost(post);
             }
         }
 
-        private static void AnalyzePost(CoyoteApi.Post post)
+        private static async Task AnalyzePost(CoyoteApi.Post post)
         {
             if (analyzed.Contains(post.id))
                 return;
@@ -109,6 +114,7 @@ namespace Eleia
                 foreach (var item in problems)
                 {
                     Console.WriteLine(item.ToString());
+                    await ch.PostComment(post, $"Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {item.Probability})");
                 }
                 Console.WriteLine(post.url);
                 Console.WriteLine(post.text.Length < 50 ? post.text : post.text.Substring(0, 50));
