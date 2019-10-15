@@ -65,6 +65,7 @@ namespace Eleia
             var password = config.GetValue<string>("password");
             var threshold = config.GetValue<float>("threshold");
             timeBetweenUpdates = config.GetValue<int>("timeBetweenUpdates");
+            Endpoints.IsDebug = config.GetValue("useDebug4p", true);
 
             var serviceProvider = new ServiceCollection()
                 .AddLogging(builder => { builder.AddConsole(); })

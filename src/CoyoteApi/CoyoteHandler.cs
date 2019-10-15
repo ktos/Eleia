@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace Eleia.CoyoteApi
 {
+    /// <summary>
+    /// Class for communication with Coyote
+    /// </summary>
     public class CoyoteHandler
     {
         private HttpClient hc;
@@ -17,8 +20,15 @@ namespace Eleia.CoyoteApi
         private CookieContainer cookieContainer;
         private string csrfToken;
 
+        /// <summary>
+        /// Delay between operations performed
+        /// </summary>
         public TimeSpan Delay { get; set; } = TimeSpan.FromSeconds(5);
 
+        /// <summary>
+        /// Creates a new instance of CoyoteHandler with a logging factory to provide ILogger
+        /// </summary>
+        /// <param name="logger">Logging factory for debug purposes</param>
         public CoyoteHandler(ILoggerFactory logger)
         {
             _logger = logger.CreateLogger("CoyoteHandler");
@@ -29,6 +39,11 @@ namespace Eleia.CoyoteApi
             hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.3");
         }
 
+        /// <summary>
+        /// Performs a log in to a Coyote system
+        /// </summary>
+        /// <param name="username">Username to be authenticated with</param>
+        /// <param name="password">Password to be authenticated with</param>
         public async Task Login(string username, string password)
         {
             await GetCsrfToken();
@@ -51,6 +66,11 @@ namespace Eleia.CoyoteApi
             await Task.Delay(Delay);
         }
 
+        /// <summary>
+        /// Posts a comment to a specified post in the system
+        /// </summary>
+        /// <param name="post">Post we are commenting</param>
+        /// <param name="comment">Text of the comment</param>
         public async Task PostComment(Post post, string comment)
         {
             await GetCsrfToken();
@@ -90,6 +110,9 @@ namespace Eleia.CoyoteApi
             hc.DefaultRequestHeaders.Remove("X-CSRF-TOKEN");
         }
 
+        /// <summary>
+        /// Logs out of Coyote
+        /// </summary>
         public async void Logout()
         {
             await GetCsrfToken();
@@ -103,11 +126,15 @@ namespace Eleia.CoyoteApi
             var loginResultContent = await loginResult.Content.ReadAsStringAsync();
         }
 
+        /// <summary>
+        /// Gets list of last posts from the Coyote API
+        /// </summary>
+        /// <returns>List of newest posts in the system</returns>
         public async Task<IEnumerable<Post>> GetPosts()
         {
             RemoveXHeaders();
-            var json = await hc.GetStringAsync(CoyoteApi.Endpoints.PostsApi);
-            var result = JsonConvert.DeserializeObject<CoyoteApi.PostsApiResult>(json);
+            var json = await hc.GetStringAsync(Endpoints.PostsApi);
+            var result = JsonConvert.DeserializeObject<PostsApiResult>(json);
 
             return result.data;
         }
