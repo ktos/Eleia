@@ -41,7 +41,7 @@ namespace Eleia.CoyoteApi
         /// <summary>
         /// Coyote API endpoint for getting new posts
         /// </summary>
-        public static string PostsApi => IsDebug ? "http://api.dev.4programmers.info/v1/posts" : "http://api.4programmers.net/v1/posts";
+        public static string PostsApi => IsDebug ? "http://api.dev.4programmers.info/v1/posts" : "https://api.4programmers.net/v1/posts";
 
         /// <summary>
         /// Coyote URL for main page

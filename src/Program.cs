@@ -93,12 +93,13 @@ namespace Eleia
 
             while (true)
             {
-                AnalyzeNewPosts();
+                AnalyzeNewPosts().Wait();
+                logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
                 Thread.Sleep(TimeSpan.FromMinutes(timeBetweenUpdates));
             }
         }
 
-        private static async void AnalyzeNewPosts()
+        private static async Task AnalyzeNewPosts()
         {
             logger.LogDebug("Getting posts...");
             var posts = await ch.GetPosts();
@@ -107,6 +108,13 @@ namespace Eleia
             {
                 await AnalyzePost(post);
             }
+            logger.LogDebug("Analyzed (or ignored) everything");
+        }
+
+        private static bool IgnorePost(Post post)
+        {
+            // ignore everything not in C# subforum
+            return !Endpoints.IsDebug && post.forum_id != 24;
         }
 
         private static async Task AnalyzePost(Post post)
@@ -115,6 +123,8 @@ namespace Eleia
                 return;
 
             analyzed.Add(post.id);
+            if (IgnorePost(post))
+                return;
 
             logger.LogDebug("Analyzing post {0}", post.id);
             var problems = pa.Analyze(post);
