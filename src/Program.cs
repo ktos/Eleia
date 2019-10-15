@@ -35,6 +35,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -58,6 +59,8 @@ namespace Eleia
             analyzed = new HashSet<int>();
 
             var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, false)
                 .AddEnvironmentVariables("ELEIA_")
                 .AddCommandLine(args)
                 .Build();
@@ -70,7 +73,9 @@ namespace Eleia
             postComments = config.GetValue("postComments", false);
 
             var serviceProvider = new ServiceCollection()
-                .AddLogging(builder => builder.AddConsole())
+                .AddLogging(builder => builder
+                    .AddConfiguration(config.GetSection("Logging"))
+                    .AddConsole())
                 .AddSingleton(config)
                 .AddTransient<CoyoteHandler>()
                 .AddTransient<PostAnalyzer>()
