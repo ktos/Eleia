@@ -30,6 +30,7 @@
 #endregion License
 
 using Eleia.ML;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,15 +44,16 @@ namespace Eleia
     /// </summary>
     public class PostAnalyzer
     {
-        private const double CodeDetectorTreshold = 0.99;
+        private float codeDetectorTreshold = 0.99f;
         private CodeDetector codeDetector;
 
         /// <summary>
         /// Creates a new instance of PostAnalyzer, loads all detectors used
         /// in analyze process
         /// </summary>
-        public PostAnalyzer()
+        public PostAnalyzer(IConfigurationRoot configuration)
         {
+            codeDetectorTreshold = configuration.GetValue("threshold", 0.99f);
             codeDetector = new CodeDetector();
         }
 
@@ -79,7 +81,7 @@ namespace Eleia
             {
                 var result = codeDetector.Predict(para);
 
-                if (result.Prediction == "code" && result.Score[1] > CodeDetectorTreshold)
+                if (result.Prediction == "code" && result.Score[1] > codeDetectorTreshold)
                 {
                     return new NotFormattedCodeFound { Probability = result.Score[1] };
                 }

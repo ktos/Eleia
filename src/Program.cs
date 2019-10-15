@@ -43,7 +43,7 @@ namespace Eleia
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     internal static class Program
     {
-        private static int timeBetweenUpdates = 60;
+        private static int timeBetweenUpdates;
 
         private static HashSet<int> analyzed;
 
@@ -51,6 +51,7 @@ namespace Eleia
 
         private static PostAnalyzer pa;
         private static CoyoteHandler ch;
+        private static bool postComments;
 
         private static void Main(string[] args)
         {
@@ -63,12 +64,14 @@ namespace Eleia
 
             var username = config.GetValue<string>("username");
             var password = config.GetValue<string>("password");
-            var threshold = config.GetValue<float>("threshold");
-            timeBetweenUpdates = config.GetValue<int>("timeBetweenUpdates");
+            timeBetweenUpdates = config.GetValue("timeBetweenUpdates", 60);
+
             Endpoints.IsDebug = config.GetValue("useDebug4p", true);
+            postComments = config.GetValue("postComments", false);
 
             var serviceProvider = new ServiceCollection()
-                .AddLogging(builder => { builder.AddConsole(); })
+                .AddLogging(builder => builder.AddConsole())
+                .AddSingleton(config)
                 .AddTransient<CoyoteHandler>()
                 .AddTransient<PostAnalyzer>()
                 .BuildServiceProvider();
@@ -76,7 +79,8 @@ namespace Eleia
             ch = serviceProvider.GetService<CoyoteHandler>();
             pa = serviceProvider.GetService<PostAnalyzer>();
 
-            //ch.Login(username, password).Wait();
+            if (postComments)
+                ch.Login(username, password).Wait();
 
             logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Eleia");
             logger.LogInformation("Eleia is running...");
@@ -100,7 +104,7 @@ namespace Eleia
             }
         }
 
-        private static async Task AnalyzePost(CoyoteApi.Post post)
+        private static async Task AnalyzePost(Post post)
         {
             if (analyzed.Contains(post.id))
                 return;
@@ -114,7 +118,9 @@ namespace Eleia
                 foreach (var item in problems)
                 {
                     Console.WriteLine(item.ToString());
-                    //await ch.PostComment(post, $"Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {item.Probability})");
+
+                    if (postComments)
+                        await ch.PostComment(post, $"Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {item.Probability})");
                 }
                 Console.WriteLine(post.url);
                 Console.WriteLine(post.text.Length < 50 ? post.text : post.text.Substring(0, 50));
