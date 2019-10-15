@@ -84,12 +84,20 @@ namespace Eleia
             ch = serviceProvider.GetService<CoyoteHandler>();
             pa = serviceProvider.GetService<PostAnalyzer>();
 
-            if (postComments)
-                ch.Login(username, password).Wait();
-
             logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Eleia");
             logger.LogDebug("Eleia is running...");
+
+            if (postComments && (username == null || password == null))
+            {
+                logger.LogError("Username or password is not provided, but posting comments is set. Exiting.");
+                Thread.Sleep(100);
+                Environment.Exit(1);
+            }
+
             logger.LogDebug("Will use username: {0}, will post comments: {1}, will use real 4programmers.net: {2}", username, postComments, !Endpoints.IsDebug);
+
+            if (postComments)
+                ch.Login(username, password).Wait();
 
             while (true)
             {
