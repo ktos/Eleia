@@ -32,6 +32,7 @@
 using Eleia.CoyoteApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.CommandLine;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -62,7 +63,7 @@ namespace Eleia
             analyzed = new HashSet<int>();
 
             var config = new ConfigurationBuilder()
-                .AddEnvironmentVariables("ELEIA")
+                .AddEnvironmentVariables("ELEIA_")
                 .AddCommandLine(args)
                 .Build();
 
@@ -71,14 +72,18 @@ namespace Eleia
             var threshold = config.GetValue<float>("threshold");
             timeBetweenUpdates = config.GetValue<int>("timeBetweenUpdates");
 
-            pa = new PostAnalyzer();
+            var serviceProvider = new ServiceCollection()
+                .AddLogging(builder => { builder.AddConsole(); })
+                .AddTransient<CoyoteHandler>()
+                .AddTransient<PostAnalyzer>()
+                .BuildServiceProvider();
 
-            ch = new CoyoteHandler();
-            ch.Login(username, password).Wait();
+            ch = serviceProvider.GetService<CoyoteHandler>();
+            pa = serviceProvider.GetService<PostAnalyzer>();
 
-            var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
-            logger = loggerFactory.CreateLogger("Eleia");
+            //ch.Login(username, password).Wait();
 
+            logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Eleia");
             logger.LogInformation("Eleia is running...");
 
             while (true)
@@ -114,7 +119,7 @@ namespace Eleia
                 foreach (var item in problems)
                 {
                     Console.WriteLine(item.ToString());
-                    await ch.PostComment(post, $"Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {item.Probability})");
+                    //await ch.PostComment(post, $"Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {item.Probability})");
                 }
                 Console.WriteLine(post.url);
                 Console.WriteLine(post.text.Length < 50 ? post.text : post.text.Substring(0, 50));

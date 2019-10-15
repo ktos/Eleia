@@ -43,7 +43,7 @@ namespace Eleia
     /// </summary>
     public class PostAnalyzer
     {
-        private const double CodeDetectorTreshold = 0.95;
+        private const double CodeDetectorTreshold = 0.99;
         private CodeDetector codeDetector;
 
         /// <summary>

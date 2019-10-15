@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -11,13 +12,16 @@ namespace Eleia.CoyoteApi
     public class CoyoteHandler
     {
         private HttpClient hc;
+        private ILogger _logger;
         private CookieContainer cookieContainer;
         private string csrfToken;
 
         public TimeSpan Delay { get; set; } = TimeSpan.FromSeconds(5);
 
-        public CoyoteHandler()
+        public CoyoteHandler(ILoggerFactory logger)
         {
+            _logger = logger.CreateLogger("CoyoteHandler");
+
             cookieContainer = new CookieContainer();
             var handler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true, AllowAutoRedirect = true };
             hc = new HttpClient(handler);
@@ -37,6 +41,12 @@ namespace Eleia.CoyoteApi
 
             var loginResult = await hc.PostAsync(Endpoints.LoginPage, data);
             var loginResultContent = await loginResult.Content.ReadAsStringAsync();
+
+            if (!loginResult.IsSuccessStatusCode)
+            {
+                _logger.LogError("Login was not successful. Status code: {0}", loginResult.StatusCode);
+            }
+
             await Task.Delay(Delay);
         }
 
@@ -53,6 +63,12 @@ namespace Eleia.CoyoteApi
             hc.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
             hc.DefaultRequestHeaders.Add("X-CSRF-TOKEN", csrfToken);
             var commentResult = await hc.PostAsync(Endpoints.CommentPage, data);
+
+            if (!commentResult.IsSuccessStatusCode)
+            {
+                _logger.LogError("Posting comment was not successful. Status code: {0}", commentResult.StatusCode);
+            }
+
             await Task.Delay(Delay);
         }
 
