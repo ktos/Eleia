@@ -36,6 +36,14 @@ namespace Eleia.CoyoteApi
         /// <summary>
         /// Coyote API endpoint for getting new posts
         /// </summary>
-        public const string PostsApi = "https://api.4programmers.net/v1/posts";
+        public const string PostsApi = "http://api.dev.4programmers.info/v1/posts";
+
+        public const string MainPage = "http://dev.4programmers.info/";
+
+        public const string LoginPage = "http://dev.4programmers.info/Login";
+
+        public const string CommentPage = "http://dev.4programmers.info/Forum/Comment";
+
+        public const string LogoutPage = "http://dev.4programmers.info/Logout";
     }
 }
