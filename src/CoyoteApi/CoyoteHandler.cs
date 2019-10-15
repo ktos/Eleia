@@ -99,7 +99,7 @@ namespace Eleia.CoyoteApi
                 new KeyValuePair<string, string>("_token", csrfToken)
             });
 
-            var loginResult = await hc.PostAsync("http://dev.4programmers.info/Logout", data);
+            var loginResult = await hc.PostAsync(Endpoints.LogoutPage, data);
             var loginResultContent = await loginResult.Content.ReadAsStringAsync();
         }
 
