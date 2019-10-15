@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -74,15 +75,19 @@ namespace Eleia.CoyoteApi
 
         private async Task GetCsrfToken()
         {
-            hc.DefaultRequestHeaders.Remove("X-Requested-With");
-            hc.DefaultRequestHeaders.Remove("X-CSRF-TOKEN");
-
+            RemoveXHeaders();
             var mainPage = await hc.GetAsync(Endpoints.MainPage).Result.Content.ReadAsStringAsync();
 
             var hap = new HtmlDocument();
             hap.LoadHtml(mainPage);
             csrfToken = hap.DocumentNode.SelectSingleNode("/html/head/meta[4]").Attributes[1].Value;
             await Task.Delay(Delay);
+        }
+
+        private void RemoveXHeaders()
+        {
+            hc.DefaultRequestHeaders.Remove("X-Requested-With");
+            hc.DefaultRequestHeaders.Remove("X-CSRF-TOKEN");
         }
 
         public async void Logout()
@@ -96,6 +101,15 @@ namespace Eleia.CoyoteApi
 
             var loginResult = await hc.PostAsync("http://dev.4programmers.info/Logout", data);
             var loginResultContent = await loginResult.Content.ReadAsStringAsync();
+        }
+
+        public async Task<IEnumerable<Post>> GetPosts()
+        {
+            RemoveXHeaders();
+            var json = await hc.GetStringAsync(CoyoteApi.Endpoints.PostsApi);
+            var result = JsonConvert.DeserializeObject<CoyoteApi.PostsApiResult>(json);
+
+            return result.data;
         }
     }
 }

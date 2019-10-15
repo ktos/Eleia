@@ -31,13 +31,10 @@
 
 using Eleia.CoyoteApi;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -50,7 +47,6 @@ namespace Eleia
 
         private static HashSet<int> analyzed;
 
-        private static HttpClient hc;
         private static ILogger logger;
 
         private static PostAnalyzer pa;
@@ -58,8 +54,6 @@ namespace Eleia
 
         private static void Main(string[] args)
         {
-            hc = new HttpClient();
-            hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.3");
             analyzed = new HashSet<int>();
 
             var config = new ConfigurationBuilder()
@@ -96,7 +90,7 @@ namespace Eleia
         private static async void AnalyzeNewPosts()
         {
             logger.LogInformation("Getting posts...");
-            var posts = await GetPosts();
+            var posts = await ch.GetPosts();
 
             foreach (var post in posts)
             {
@@ -124,14 +118,6 @@ namespace Eleia
                 Console.WriteLine(post.url);
                 Console.WriteLine(post.text.Length < 50 ? post.text : post.text.Substring(0, 50));
             }
-        }
-
-        private static async Task<IEnumerable<CoyoteApi.Post>> GetPosts()
-        {
-            var json = await hc.GetStringAsync(CoyoteApi.Endpoints.PostsApi);
-            var result = JsonConvert.DeserializeObject<CoyoteApi.PostsApiResult>(json);
-
-            return result.data;
         }
     }
 }
