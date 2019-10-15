@@ -88,7 +88,8 @@ namespace Eleia
                 ch.Login(username, password).Wait();
 
             logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Eleia");
-            logger.LogInformation("Eleia is running...");
+            logger.LogDebug("Eleia is running...");
+            logger.LogDebug("Will use username: {0}, will post comments: {1}, will use real 4programmers.net: {2}", username, postComments, !Endpoints.IsDebug);
 
             while (true)
             {
@@ -99,12 +100,11 @@ namespace Eleia
 
         private static async void AnalyzeNewPosts()
         {
-            logger.LogInformation("Getting posts...");
+            logger.LogDebug("Getting posts...");
             var posts = await ch.GetPosts();
 
             foreach (var post in posts)
             {
-                logger.LogInformation("Analyzing post {0}", post.id);
                 await AnalyzePost(post);
             }
         }
@@ -115,20 +115,23 @@ namespace Eleia
                 return;
 
             analyzed.Add(post.id);
+
+            logger.LogDebug("Analyzing post {0}", post.id);
             var problems = pa.Analyze(post);
 
             if (problems.Count > 0)
             {
-                Console.WriteLine("Problems found!");
+                logger.LogInformation("Found problems in post {0}\n{1}\n{2}", post.id, post.url, post.text.Length < 50 ? post.text : post.text.Substring(0, 50));
                 foreach (var item in problems)
                 {
-                    Console.WriteLine(item.ToString());
+                    logger.LogInformation(item.ToString());
 
                     if (postComments)
+                    {
+                        logger.LogDebug("Posting comment");
                         await ch.PostComment(post, $"Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {item.Probability})");
+                    }
                 }
-                Console.WriteLine(post.url);
-                Console.WriteLine(post.text.Length < 50 ? post.text : post.text.Substring(0, 50));
             }
         }
     }

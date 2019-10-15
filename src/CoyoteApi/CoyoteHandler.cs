@@ -55,6 +55,7 @@ namespace Eleia.CoyoteApi
                 new KeyValuePair<string, string>("password", password),
             });
 
+            _logger.LogDebug("Performing login");
             var loginResult = await hc.PostAsync(Endpoints.LoginPage, data);
             var loginResultContent = await loginResult.Content.ReadAsStringAsync();
 
@@ -81,6 +82,7 @@ namespace Eleia.CoyoteApi
                 new KeyValuePair<string, string>("text", comment)
             });
 
+            _logger.LogDebug("Posting comment");
             hc.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
             hc.DefaultRequestHeaders.Add("X-CSRF-TOKEN", csrfToken);
             var commentResult = await hc.PostAsync(Endpoints.CommentPage, data);
@@ -89,12 +91,17 @@ namespace Eleia.CoyoteApi
             {
                 _logger.LogError("Posting comment was not successful. Status code: {0}", commentResult.StatusCode);
             }
+            else
+            {
+                _logger.LogInformation("Posted comment to post {0}", post.id);
+            }
 
             await Task.Delay(Delay);
         }
 
         private async Task GetCsrfToken()
         {
+            _logger.LogDebug("Getting CSRF token");
             RemoveXHeaders();
             var mainPage = await hc.GetAsync(Endpoints.MainPage).Result.Content.ReadAsStringAsync();
 
@@ -122,6 +129,7 @@ namespace Eleia.CoyoteApi
                 new KeyValuePair<string, string>("_token", csrfToken)
             });
 
+            _logger.LogDebug("Performing logout");
             var loginResult = await hc.PostAsync(Endpoints.LogoutPage, data);
             var loginResultContent = await loginResult.Content.ReadAsStringAsync();
         }
@@ -133,6 +141,7 @@ namespace Eleia.CoyoteApi
         public async Task<IEnumerable<Post>> GetPosts()
         {
             RemoveXHeaders();
+            _logger.LogDebug("Getting new posts");
             var json = await hc.GetStringAsync(Endpoints.PostsApi);
             var result = JsonConvert.DeserializeObject<PostsApiResult>(json);
 
