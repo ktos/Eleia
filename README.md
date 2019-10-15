@@ -1,6 +1,9 @@
 # Eleia
 
 [![Build Status](https://dev.azure.com/ktos/Eleia/_apis/build/status/ktos.Eleia?branchName=master)](https://dev.azure.com/ktos/Eleia/_build/latest?definitionId=5&branchName=master)
+[![Code Coverage](https://img.shields.io/azure-devops/coverage/ktos/Eleia/5)](https://dev.azure.com/ktos/Eleia/_build?definitionId=5)
+[![Tests](https://img.shields.io/azure-devops/tests/ktos/eleia/5)](https://dev.azure.com/ktos/Eleia/_build?definitionId=5)
+[![License](https://img.shields.io/github/license/ktos/Eleia)](https://github.com/ktos/Eleia/blob/master/LICENSE)
 
 The machine-learning powered bot for detecting, and commenting about unmarked
 code on 4programmers.net forum.
