@@ -53,7 +53,11 @@ namespace Eleia
         /// </summary>
         public PostAnalyzer(IConfigurationRoot configuration)
         {
-            codeDetectorTreshold = configuration.GetValue("threshold", 0.99f);
+            if (configuration != null)
+            {
+                codeDetectorTreshold = configuration.GetValue("threshold", 0.99f);
+            }
+
             codeDetector = new CodeDetector();
         }
 
