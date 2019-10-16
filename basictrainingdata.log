@@ -1,0 +1,30 @@
+Inferring Columns ...
+Creating Data loader ...
+Loading data ...
+Exploring multiple ML algorithms and settings to find you the best model for ML task: multiclass-classification
+For further learning check: https://aka.ms/mlnet-cli
+|     Trainer                              MicroAccuracy  MacroAccuracy  Duration #Iteration                     |
+[Source=AutoML, Kind=Trace] Channel started
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=ValueToKeyMapping{ col=type:type} xf=TextFeaturizing{ col=content_tf:content} xf=ColumnCopying{ col=Features:content_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronOva{} xf=KeyToValueMapping{ col=PredictedLabel:PredictedLabel} cache=+
+[Source=AutoML, Kind=Trace] 1	0,960816418285858	00:00:09.0713474	xf=ValueToKeyMapping{ col=type:type} xf=TextFeaturizing{ col=content_tf:content} xf=ColumnCopying{ col=Features:content_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronOva{} xf=KeyToValueMapping{ col=PredictedLabel:PredictedLabel} cache=+
+|1    AveragedPerceptronOva                       0,9583         0,9688       9,1          0                     |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=ValueToKeyMapping{ col=type:type} xf=TextFeaturizing{ col=content_tf:content} xf=ColumnCopying{ col=Features:content_tf} xf=Normalizing{ col=Features:Features} tr=SdcaMaximumEntropyMulti{} xf=KeyToValueMapping{ col=PredictedLabel:PredictedLabel} cache=+
+
+===============================================Experiment Results=================================================
+------------------------------------------------------------------------------------------------------------------
+|                                                     Summary                                                    |
+------------------------------------------------------------------------------------------------------------------
+|ML Task: multiclass-classification                                                                              |
+|Dataset: basictrainingdata.tsv                                                                                  |
+|Label : type                                                                                                    |
+|Total experiment time : 10,60 Secs                                                                              |
+|Total number of models explored: 1                                                                              |
+------------------------------------------------------------------------------------------------------------------
+|                                              Top 1 models explored                                             |
+------------------------------------------------------------------------------------------------------------------
+|     Trainer                              MicroAccuracy  MacroAccuracy  Duration #Iteration                     |
+|1    AveragedPerceptronOva                       0,9583         0,9688       9,1          1                     |
+------------------------------------------------------------------------------------------------------------------
+Generated trained model for consumption: E:\Marcin\!Projekty\Eleia\SampleMulticlassClassification\SampleMulticlassClassification.Model\MLModel.zip
+Generated C# code for model consumption: E:\Marcin\!Projekty\Eleia\SampleMulticlassClassification\SampleMulticlassClassification.ConsoleApp
+Check out log file for more information: E:\Marcin\!Projekty\Eleia\SampleMulticlassClassification\logs\debug_log.txt
