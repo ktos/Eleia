@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -143,7 +144,8 @@ namespace Eleia.CoyoteApi
             RemoveXHeaders();
             _logger.LogDebug("Getting new posts");
             var json = await hc.GetStringAsync(Endpoints.PostsApi);
-            var result = JsonConvert.DeserializeObject<PostsApiResult>(json);
+
+            var result = JsonSerializer.Deserialize<PostsApiResult>(json);
 
             return result.data;
         }
