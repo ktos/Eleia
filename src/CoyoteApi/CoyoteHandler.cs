@@ -139,11 +139,11 @@ namespace Eleia.CoyoteApi
         /// Gets list of last posts from the Coyote API
         /// </summary>
         /// <returns>List of newest posts in the system</returns>
-        public async Task<IEnumerable<Post>> GetPosts()
+        public async Task<IEnumerable<Post>> GetPosts(int page = 1)
         {
             RemoveXHeaders();
             _logger.LogDebug("Getting new posts");
-            var json = await hc.GetStringAsync(Endpoints.PostsApi);
+            var json = await hc.GetStringAsync($"{Endpoints.PostsApi}?page={page}");
 
             var result = JsonSerializer.Deserialize<PostsApiResult>(json);
 
