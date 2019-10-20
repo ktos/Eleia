@@ -87,7 +87,7 @@ namespace Eleia
 
                 if (result.Prediction && result.Score > codeDetectorTreshold)
                 {
-                    return new NotFormattedCodeFound { Probability = result.Score };
+                    return new NotFormattedCodeFound { Probability = result.Probability };
                 }
             }
 
