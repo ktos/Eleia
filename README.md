@@ -53,12 +53,13 @@ eleia --username "Some User" --password "Password" --useDebug4p false --postComm
 
 All possible configuration options are:
 
-* `username` -> username to log in with Coyote,
-* `password` -> password to authenticate with Coyote,
-* `useDebug4p` -> should use `dev.4programmers.info` or `4programmers.net`?,
-* `postComments` -> should post comments when unformatted code is found?,
-* `timeBetweenUpdates` -> what is the time sleeping before getting new batch of posts?,
-* `treshold` -> what is the treshold of "code" classification triggering posting a comment (by default: 0.99).
+* `username` -> (string) username to log in with Coyote,
+* `password` -> (string) password to authenticate with Coyote,
+* `useDebug4p` -> (bool) should use `dev.4programmers.info` or `4programmers.net`?,
+* `postComments` -> (bool) should post comments when unformatted code is found?,
+* `timeBetweenUpdates` -> (int) what is the time sleeping before getting new batch of posts?,
+* `threshold` -> (float) what is the threshold of "code" classification triggering posting a comment (by default: 0.99),
+* `nagMessage` -> (string) what is the nag message posted as comment? `{0}` will be replaced with probability of unformatted code.
 
 ## Machine Learning
 

@@ -48,12 +48,13 @@ eleia --username "Jakiś Użytkownik" --password "sekretne hasło" --useDebug4p 
 
 Dostępne opcje konfiguracyjne:
 
-* `username` -> nazwa użytkownika do zalogowania w Coyote,
-* `password` -> hasło użytkownika do zalogowania,
-* `useDebug4p` -> używać `dev.4programmers.info` czy `4programmers.net`?,
-* `postComments` -> czy powinien wysyłać komentarze?,
-* `timeBetweenUpdates` -> jaki jest czas oczekiwania przed pobraniem kolejnej listy postów?,
-* `treshold` -> jaki jest próg klasyfikacji po którym zostaje wysłany komentarz (domyślnie: 0,99).
+* `username` -> (string) nazwa użytkownika do zalogowania w Coyote,
+* `password` -> (string) hasło użytkownika do zalogowania,
+* `useDebug4p` -> (bool) używać `dev.4programmers.info` czy `4programmers.net`?,
+* `postComments` -> (bool) czy powinien wysyłać komentarze?,
+* `timeBetweenUpdates` -> (int) jaki jest czas oczekiwania przed pobraniem kolejnej listy postów?,
+* `threshold` -> (float) jaki jest próg klasyfikacji po którym zostaje wysłany komentarz (domyślnie: 0,99),
+* `nasMessage` -> (string) jaka jest treść wiadomości wysyłanej jako komentarz do postu? `{0}` bedzie zamienione na prawdopodobieństwo nieformatowanego kodu.
 
 ## Uczenie Maszynowe
 

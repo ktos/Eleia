@@ -37,7 +37,7 @@ namespace Eleia.CoyoteApi
             cookieContainer = new CookieContainer();
             var handler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true, AllowAutoRedirect = true };
             hc = new HttpClient(handler);
-            hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.3");
+            hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.4");
         }
 
         /// <summary>
