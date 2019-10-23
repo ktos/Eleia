@@ -39,10 +39,10 @@ namespace Eleia.ML
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class CodeDetectorModelInput
     {
-        [ColumnName("type"), LoadColumn(0)]
-        public string Type { get; set; }
+        [ColumnName("code"), LoadColumn(0)]
+        public bool IsCode { get; set; }
 
-        [ColumnName("content"), LoadColumn(1)]
+        [ColumnName("text"), LoadColumn(1)]
         public string Content { get; set; }
     }
 }

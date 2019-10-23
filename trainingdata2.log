@@ -1,0 +1,88 @@
+Inferring Columns ...
+Creating Data loader ...
+Loading data ...
+Exploring multiple ML algorithms and settings to find you the best model for ML task: binary-classification
+For further learning check: https://aka.ms/mlnet-cli
+|     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
+[Source=AutoML, Kind=Trace] Channel started
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+Time expired before creating a model. Try increasing the exploration time from 10 seconds to a longer duration using the --max-exploration-time option. Learn about recommended training time at https://aka.ms/cli-trainingtime
+Exiting ...
+Inferring Columns ...
+Creating Data loader ...
+Loading data ...
+Exploring multiple ML algorithms and settings to find you the best model for ML task: binary-classification
+For further learning check: https://aka.ms/mlnet-cli
+|     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
+[Source=AutoML, Kind=Trace] Channel started
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 1	0,9354598125518	00:00:13.8573576	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+|1    AveragedPerceptronBinary               0,9330   0,9194   0,8495    0,8052      13,9          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
+
+===============================================Experiment Results=================================================
+------------------------------------------------------------------------------------------------------------------
+|                                                     Summary                                                    |
+------------------------------------------------------------------------------------------------------------------
+|ML Task: binary-classification                                                                                  |
+|Dataset: trainingdata2.tsv                                                                                      |
+|Label : code                                                                                                    |
+|Total experiment time : 30,91 Secs                                                                              |
+|Total number of models explored: 1                                                                              |
+------------------------------------------------------------------------------------------------------------------
+|                                              Top 1 models explored                                             |
+------------------------------------------------------------------------------------------------------------------
+|     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
+|1    AveragedPerceptronBinary               0,9330   0,9194   0,8495    0,8052      13,9          1             |
+------------------------------------------------------------------------------------------------------------------
+Generated trained model for consumption: E:\Marcin\Temp\SampleBinaryClassification\SampleBinaryClassification.Model\MLModel.zip
+Retrieving best pipeline ...
+Generated C# code for model consumption: E:\Marcin\Temp\SampleBinaryClassification\SampleBinaryClassification.ConsoleApp
+Check out log file for more information: E:\Marcin\Temp\SampleBinaryClassification\logs\debug_log.txt
+Inferring Columns ...
+Inferring Columns ...
+Creating Data loader ...
+Loading data ...
+Exploring multiple ML algorithms and settings to find you the best model for ML task: binary-classification
+For further learning check: https://aka.ms/mlnet-cli
+|     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
+[Source=AutoML, Kind=Trace] Channel started
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 1	0,940796401281827	00:00:14.2387508	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+|1    AveragedPerceptronBinary               0,9412   0,9354   0,8511    0,7925      14,2          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 2	0,954610388081555	00:00:22.0645359	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
+|2    SdcaLogisticRegressionBinary           0,9585   0,9780   0,9461    0,8732      22,1          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} tr=LightGbmBinary{}  cache=-
+[Source=AutoML, Kind=Trace] 3	0,951266133797984	00:00:42.1084700	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} tr=LightGbmBinary{}  cache=-
+|3    LightGbmBinary                         0,9493   0,9708   0,9250    0,8451      42,1          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SymbolicSgdLogisticRegressionBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 4	0,928144507360343	00:00:13.4418678	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SymbolicSgdLogisticRegressionBinary{}  cache=+
+|4    SymbolicSgdLogisticRegressionBinary    0,9275   0,9411   0,8545    0,7742      13,5          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=LinearSvmBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 5	0,925070505521871	00:00:13.0820072	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=LinearSvmBinary{}  cache=+
+|5    LinearSvmBinary                        0,9286   0,8960   0,7938    0,7949      13,1          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} tr=FastTreeBinary{}  cache=-
+
+===============================================Experiment Results=================================================
+------------------------------------------------------------------------------------------------------------------
+|                                                     Summary                                                    |
+------------------------------------------------------------------------------------------------------------------
+|ML Task: binary-classification                                                                                  |
+|Dataset: trainingdata2.tsv                                                                                      |
+|Label : code                                                                                                    |
+|Total experiment time : 180,89 Secs                                                                             |
+|Total number of models explored: 5                                                                              |
+------------------------------------------------------------------------------------------------------------------
+|                                              Top 5 models explored                                             |
+------------------------------------------------------------------------------------------------------------------
+|     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
+|1    SdcaLogisticRegressionBinary           0,9585   0,9780   0,9461    0,8732      22,1          2             |
+|2    LightGbmBinary                         0,9493   0,9708   0,9250    0,8451      42,1          3             |
+|3    AveragedPerceptronBinary               0,9412   0,9354   0,8511    0,7925      14,2          1             |
+|4    LinearSvmBinary                        0,9286   0,8960   0,7938    0,7949      13,1          5             |
+|5    SymbolicSgdLogisticRegressionBinary    0,9275   0,9411   0,8545    0,7742      13,5          4             |
+------------------------------------------------------------------------------------------------------------------
+Generated trained model for consumption: E:\Marcin\Temp\SampleBinaryClassification\SampleBinaryClassification.Model\MLModel.zip
+Generated C# code for model consumption: E:\Marcin\Temp\SampleBinaryClassification\SampleBinaryClassification.ConsoleApp
+Check out log file for more information: E:\Marcin\Temp\SampleBinaryClassification\logs\debug_log.txt
