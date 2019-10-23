@@ -53,6 +53,7 @@ namespace Eleia
         private static PostAnalyzer pa;
         private static CoyoteHandler ch;
         private static bool postComments;
+        private static string nagMessage;
 
         private static void Main(string[] args)
         {
@@ -60,7 +61,7 @@ namespace Eleia
 
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", true, false)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
                 .AddEnvironmentVariables("ELEIA_")
                 .AddCommandLine(args)
                 .Build();
@@ -68,6 +69,8 @@ namespace Eleia
             var username = config.GetValue<string>("username");
             var password = config.GetValue<string>("password");
             timeBetweenUpdates = config.GetValue("timeBetweenUpdates", 60);
+
+            nagMessage = config.GetValue("nagMessage", "Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {0})");
 
             Endpoints.IsDebug = config.GetValue("useDebug4p", true);
             postComments = config.GetValue("postComments", false);
@@ -147,7 +150,7 @@ namespace Eleia
                     if (postComments)
                     {
                         logger.LogDebug("Posting comment");
-                        await ch.PostComment(post, $"Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {item.Probability})");
+                        await ch.PostComment(post, string.Format(nagMessage, item.Probability));
                     }
                 }
             }
