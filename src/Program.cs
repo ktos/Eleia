@@ -29,6 +29,7 @@
 
 #endregion License
 
+using CommandLine;
 using Eleia.CoyoteApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,7 +56,36 @@ namespace Eleia
         private static bool postComments;
         private static string nagMessage;
 
+        public class Options
+        {
+            [Option('u', "username", Default = null, HelpText = "Username to log in with", Required = false)]
+            public string UserName { get; set; }
+
+            [Option('p', "password", Default = null, HelpText = "Password to log in with", Required = false)]
+            public string Password { get; set; }
+
+            [Option('t', "timeBetweenUpdates", Default = null, HelpText = "Time (in minutes) to wait before getting another set of posts", Required = false)]
+            public int? TimeBetweenUpdates { get; set; }
+
+            [Option('n', "nagMessage", Default = null, HelpText = "Message to be posted in comment to post", Required = false)]
+            public string NagMessage { get; set; }
+
+            [Option('d', "useDebug4p", Default = null, HelpText = "Should be used dev.4programmers.info?", Required = false)]
+            public bool? UseDebug4p { get; set; }
+
+            [Option('c', "postComments", Default = null, HelpText = "Should comments be posted to website?", Required = false)]
+            public bool? PostComments { get; set; }
+
+            [Option('r', "runOnce", Default = false, HelpText = "Should the application run only once, or loop?", Required = false)]
+            public bool RunOnce { get; set; }
+        }
+
         private static void Main(string[] args)
+        {
+            var opts = Parser.Default.ParseArguments<Options>(args).WithParsed(MainLoop);
+        }
+
+        private static void MainLoop(Options opts)
         {
             analyzed = new HashSet<int>();
 
@@ -63,17 +93,16 @@ namespace Eleia
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
                 .AddEnvironmentVariables("ELEIA_")
-                .AddCommandLine(args)
                 .Build();
 
-            var username = config.GetValue<string>("username");
-            var password = config.GetValue<string>("password");
-            timeBetweenUpdates = config.GetValue("timeBetweenUpdates", 60);
+            var username = config.GetValue("username", opts.UserName);
+            var password = config.GetValue("password", opts.Password);
+            timeBetweenUpdates = config.GetValue("timeBetweenUpdates", opts.TimeBetweenUpdates.HasValue ? opts.TimeBetweenUpdates.Value : 60);
 
             nagMessage = config.GetValue("nagMessage", "Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {0})");
 
-            Endpoints.IsDebug = config.GetValue("useDebug4p", true);
-            postComments = config.GetValue("postComments", false);
+            Endpoints.IsDebug = config.GetValue("useDebug4p", opts.UseDebug4p.HasValue ? opts.UseDebug4p.Value : true);
+            postComments = config.GetValue("postComments", opts.PostComments.HasValue ? opts.PostComments.Value : false);
 
             var serviceProvider = new ServiceCollection()
                 .AddLogging(builder => builder
@@ -88,6 +117,7 @@ namespace Eleia
             pa = serviceProvider.GetService<PostAnalyzer>();
 
             logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Eleia");
+
             logger.LogInformation("Eleia is running...");
 
             if (postComments && (username == null || password == null))
@@ -102,12 +132,12 @@ namespace Eleia
             if (postComments)
                 ch.Login(username, password).Wait();
 
-            if (timeBetweenUpdates <= 0)
+            if (opts.RunOnce || timeBetweenUpdates == 0)
             {
                 AnalyzeNewPosts().Wait();
-                logger.LogDebug("Single run completed");
+                logger.LogDebug("Single run completed.");
             }
-            else if (timeBetweenUpdates > 0)
+            else
             {
                 while (true)
                 {
