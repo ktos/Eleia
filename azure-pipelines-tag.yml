@@ -20,7 +20,11 @@ steps:
     command: 'restore'
     projects: 'src/*.csproj'
 
-- script: dotnet build --configuration $(buildConfiguration) /p:Version=$(GitVersion.SemVer) /p:InformationalVersion=$(GitVersion.FullSemVer)
+- task: DotNetCoreCLI@2  
+  inputs:
+    command: 'build'
+    projects: 'src/*.csproj'
+    arguments: '--configuration $(buildConfiguration) /p:Version=$(GitVersion.SemVer) /p:InformationalVersion=$(GitVersion.FullSemVer)'
   displayName: 'dotnet build $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
