@@ -36,7 +36,7 @@ steps:
     summaryFileLocation: '$(Agent.TempDirectory)/*/coverage.cobertura.xml'
     pathToSources: 'src/'
     reportDirectory: 'report/'
-	
+
 - script: dotnet publish src/*.csproj --configuration $(buildConfiguration) -o $(Build.ArtifactStagingDirectory) /p:Version=$(GitVersion.SemVer) /p:InformationalVersion=$(GitVersion.FullSemVer)
 
 - task: ArchiveFiles@2
