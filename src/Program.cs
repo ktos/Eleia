@@ -91,8 +91,6 @@ namespace Eleia
             logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Eleia");
             logger.LogInformation("Eleia is running...");
 
-            logger.LogDebug($"Version: {Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}");
-
             if (postComments && (username == null || password == null))
             {
                 logger.LogError("Username or password is not provided, but posting comments is set. Exiting.");

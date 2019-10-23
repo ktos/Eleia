@@ -38,7 +38,18 @@ namespace Eleia.CoyoteApi
             cookieContainer = new CookieContainer();
             var handler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true, AllowAutoRedirect = true };
             hc = new HttpClient(handler);
-            hc.DefaultRequestHeaders.Add("User-Agent", $"Eleia/{Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}");
+
+            var userAgent = BuildUserAgent();
+            hc.DefaultRequestHeaders.Add("User-Agent", userAgent);
+            _logger.LogDebug($"User-Agent to be used: {userAgent}");
+        }
+
+        private string BuildUserAgent()
+        {
+            var semVer = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            var platform = Environment.OSVersion.Platform.ToString();
+
+            return $"Eleia/{semVer} ({platform})";
         }
 
         /// <summary>
