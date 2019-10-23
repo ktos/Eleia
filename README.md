@@ -63,11 +63,18 @@ All possible configuration options are:
 
 ## Machine Learning
 
-It is using ML.NET framework to perform machine learning-based classification,
-and AutoML was used to generate model.
+It is using ML.NET framework to perform machine learning-based binary classification,
+and AutoML (`mlnet auto-train`) was used to generate model.
 
-[basictrainingdata.tsv](https://github.com/ktos/Eleia/blob/master/basictrainingdata.tsv)
+[trainingdata2.tsv](https://github.com/ktos/Eleia/blob/master/trainingdata2.tsv)
 was a file which the training was performed on.
+
+[trainingdata2.log](https://github.com/ktos/Eleia/blob/master/trainingdata2.log)
+is a log of auto-training, SdcaLogisticRegressionBinary was decided with
+accuracy of 0.9585.
+
+I was also running longer training sessions than 180 seconds, but still that
+algorithm was decided as the best, longer time had no visible impact.
 
 ## Contributing
 
@@ -78,3 +85,6 @@ to achieve. Then fork this repo to your own profile, fix bugs or add new things
 and send me a pull request.
 
 Every PR must be built and tested on Azure Pipelines, it is done automatically.
+
+Published versions are built on Azure Pipelines on every new tag, I am using
+SemVer to versioning releases.

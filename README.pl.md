@@ -58,10 +58,18 @@ Dostępne opcje konfiguracyjne:
 
 ## Uczenie Maszynowe
 
-Został wykorzystany framework ML.NET, oraz AutoML do wygenerowania modelu.
+Został wykonany ML.NET do wykorzystania modelu binarnej klasyfikacji, natomiast
+AutoML (tj. `mlnet auto-train`) zostało wykorzystane do wygenerowania modelu.
 
-[basictrainingdata.tsv](https://github.com/ktos/Eleia/blob/master/basictrainingdata.tsv)
+[trainingdata2.tsv](https://github.com/ktos/Eleia/blob/master/trainingdata2.tsv)
 to plik, na którym model był trenowany.
+
+[trainingdata2.log](https://github.com/ktos/Eleia/blob/master/trainingdata2.log)
+to log z autotreningu, SdcaLogisticRegressionBinary z dokładnością 0,9585 został
+ostatecznie wykorzystany.
+
+Uruchamiałem też dłuższe sesje trenujące niż 180 sekund, ale nadal ten algorytm
+był uznawany za najlepszy, dłuższy czas treningu nie zmieniał nic.
 
 ## Twój wkład
 
@@ -72,3 +80,6 @@ próbujesz osiągnąć. A potem klasycznie: stwórz fork tego repozytorium,
 naprawiaj błędy lub dodawaj nowe funkcje, i na końcu wyślij mi pull request.
 
 Każdy PR jest automatycznie budowany i testowany przez Azure Pipelines.
+
+Wersje końcowe są budowane przez Azure Pipelines przy każdym nowym tagu,
+używam SemVer do określenia numeru wersji wydania.
