@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Eleia.CoyoteApi
 {
@@ -37,7 +38,7 @@ namespace Eleia.CoyoteApi
             cookieContainer = new CookieContainer();
             var handler = new HttpClientHandler() { CookieContainer = cookieContainer, UseCookies = true, AllowAutoRedirect = true };
             hc = new HttpClient(handler);
-            hc.DefaultRequestHeaders.Add("User-Agent", "Eleia/0.4");
+            hc.DefaultRequestHeaders.Add("User-Agent", $"Eleia/{Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}");
         }
 
         /// <summary>

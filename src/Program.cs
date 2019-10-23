@@ -36,6 +36,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -88,7 +89,9 @@ namespace Eleia
             pa = serviceProvider.GetService<PostAnalyzer>();
 
             logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Eleia");
-            logger.LogDebug("Eleia is running...");
+            logger.LogInformation("Eleia is running...");
+
+            logger.LogDebug($"Version: {Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion}");
 
             if (postComments && (username == null || password == null))
             {
