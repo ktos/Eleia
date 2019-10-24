@@ -103,12 +103,20 @@ namespace Eleia
             if (postComments)
                 ch.Login(username, password).Wait();
 
-            while (true)
+            if (timeBetweenUpdates <= 0)
             {
                 AnalyzeNewPosts().Wait();
-                logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
-                Thread.Sleep(TimeSpan.FromMinutes(timeBetweenUpdates));
+                logger.LogDebug("Single run completed");
             }
+            else if(timeBetweenUpdates > 0)
+            {
+                while (true)
+                {
+                    AnalyzeNewPosts().Wait();
+                    logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
+                    Thread.Sleep(TimeSpan.FromMinutes(timeBetweenUpdates));
+                }
+            }           
         }
 
         private static async Task AnalyzeNewPosts()
