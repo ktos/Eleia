@@ -157,5 +157,32 @@ namespace Eleia.CoyoteApi
 
             return result.data;
         }
+
+        /// <summary>
+        /// Get single post of a given id from the Coyote API
+        /// </summary>
+        /// <param name="postId">Id of a post to get</param>
+        /// <returns>Single post of a given id</returns>
+        public async Task<Post> GetSinglePost(int postId)
+        {
+            RemoveXHeaders();
+            _logger.LogDebug("Getting new posts");
+            var json = await hc.GetStringAsync($"{Endpoints.PostsApi}/{postId}").ConfigureAwait(false);
+
+            var result = JsonSerializer.Deserialize<SinglePostApiResult>(json);
+
+            var post = new Post
+            {
+                created_at = result.data.created_at,
+                forum_id = result.data.forum_id,
+                id = result.data.id,
+                text = result.data.text,
+                topic_id = result.data.topic_id,
+                user = result.data.user,
+                user_name = result.data.user_name
+            };
+
+            return post;
+        }
     }
 }

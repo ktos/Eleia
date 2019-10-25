@@ -21,40 +21,111 @@ znów pobierze nowe posty, znów je zanalizuje i tak dalej i dalej. Posty, któr
 zostały już ocenione nie są analizowana ponownie, ale ta lista jest
 przechowywana w pamięci tymczasowej.
 
-## Użycie
+## Użycie (CLI)
 
-Musisz dostarczyć aplikacji konfiguracji, zanim zaczniesz jej używać. Możesz
-wykorzystać plik konfiguracyjny `appconfig.json`, zmienne środowiskowe o nazwach
-z prefiksem `ELEIA_` lub parametry wywołania. Wszystkie są równoważne.
+Począwszy od wersji 0.6, Eleia obsługuje zestaw parametrów wiersza polecenia,
+gdzie każdy jest w formacie `--parametr <wartość>` lub skróconej `-p <wartość>`.
 
-Na przykład, aby tylko uruchomić aplikację i zobaczyć jak działa na serwerze
-testowym, po prostu uruchom:
+* `-u` lub `--username` -> nazwa użytkownika do zalogowania do systemu Coyote.
+Domyślnie jest pusta i może być pusta tylko jeśli `-c` nie jest `true`.
+* `-p` lub `--password` -> hasło do zalogowania do systemu Coyote,
+* `-t` lub `--timeBetweenUpdates` -> czas (w minutach) do odczekania przed
+pobraniem kolejnego zestawu postów do oceny, o ile `-s` nie zostało podane,
+ani `-r` nie jest `true`. Jeśli zostanie podany 0, zachowuje się tak samo, jak
+przy `-r true`, czyli uruchamia się i kończy działanie po wykonaniu jednej
+analizy. Domyślnie 60 (minut).
+* `-n` lub `--nagMessage` -> wiadomość, która zostanie umieszczona w komentarzu
+do posta, który został sklasyfikowany jako zawierający błędnie formatowany kod.
+Można użyć `{0}` w miejsce którego będzie wstawione prawdopodobieństwo wyliczone
+przez algorytm.
+* `-d` lub `--useDebug4p` -> `true` lub `false`. Jeśli ustawione `true`,
+będzie wykorzystany `dev.4programmers.info`' zamiast `4programmers.net`.
+Domyślnie `true`.
+* `-c` lub `--postComments` -> `true` lub `false`. Jeśli ustawiono `true`, to po
+znalezieniu problemu z postem zostanie do niego dodany komentarz o treści jak
+ustawiono w `-n`. Domyślnie `false`.
+* `-r` lub `--runOnce` -> `true` lub `false`. Jeśli ustawiono `true` to
+aplikacja wykona analizę tylko raz, na raz pobranym zestawie nowych postów.
+Dmyślnie `false`.
+* `-s` lub `--runOnSet` -> uruchamia pojedynczą analizę, ale tylko na postach,
+których id zostały przekazane w wartości polecenia (rozdzielone przecinkami).
+Na przykład `-s 1,2` przeanalizuje posty o id 1 oraz 2. Implikuje `-r`.
+* `--help` -> wyświetla ekran pomocy i kończy działanie,
+* `--version` -> wyświetla informacje o wersji i kończy działanie.
 
-```batch
-eleia
+### Przykłady
+
+```bash
+# uruchomi się raz, pobierze nowe posty, przeanalizuje je i skomentuje - na
+# serwerze testowym
+eleia --u someuser -p someSECRETpassw0rd --useDebug4p true --postComments true --runOnce true
+
+# będzie ciągle analiziwać posty, czekając 15 minut przed pobraniem nowych do
+# analizy, nie będzie komentować, używa serwera produkcyjnego
+eleia -d false -c false -t 15
+
+# przeanalizuje posty o id 221 oraz 14122
+eleia --runOnSet 221,14122
 ```
 
-Aby uruchomić na serwerze produkcyjnym:
+## Konfiguracja z wykorzystaniem pliku konfiguracyjnego i zmiennych środowiskowych
 
-```batch
-eleia --useDebug4p false
-```
+Poza parametrami dostarczanymi przez wiersz polecenia, można skonfigurować
+aplikację z wykorzystaniem pliku konfiguracyjnego lub zmiennych środowiskowych
+aby ustawić np. używaną nazwę użytkownika czy hasło. Te opcje zostały głównie
+pomyślane do wykorzystania w kontenerach.
 
-Aby wysyłać komentarze, musisz podać nazwę użytkownika, hasło i opcję `postComments`:
-
-```batch
-eleia --username "Jakiś Użytkownik" --password "sekretne hasło" --useDebug4p false --postComments true
-```
+**Uwaga:** Konfiguracja ma priorytet ponad opcjami wiersza polecenia. Przykładowo,
+ustawiając nazwę użytkownika w opcji `-u` oraz w pliku konfiguracyjnym, zostanie
+użyta wartość z pliku.
 
 Dostępne opcje konfiguracyjne:
 
-* `username` -> (string) nazwa użytkownika do zalogowania w Coyote,
-* `password` -> (string) hasło użytkownika do zalogowania,
-* `useDebug4p` -> (bool) używać `dev.4programmers.info` czy `4programmers.net`?,
-* `postComments` -> (bool) czy powinien wysyłać komentarze?,
-* `timeBetweenUpdates` -> (int) jaki jest czas oczekiwania przed pobraniem kolejnej listy postów?,
-* `threshold` -> (float) jaki jest próg klasyfikacji po którym zostaje wysłany komentarz (domyślnie: 0,99),
-* `nasMessage` -> (string) jaka jest treść wiadomości wysyłanej jako komentarz do postu? `{0}` bedzie zamienione na prawdopodobieństwo nieformatowanego kodu.
+* `username` -> (string) nazwa użytkownika do logowania,
+* `password` -> (string) hasło do logowania,
+* `useDebug4p` -> (bool) czy używać `dev.4programmers.info` czy `4programmers.net`?,
+* `postComments` -> (bool) czy wysyłać komentarze?,
+* `timeBetweenUpdates` -> (int) jaki jest czas przerwy pomiędzy pobraniem kolejnych
+postów (w minutach)?,
+* `threshold` -> (float) jaki jest próg klasyfikacji, po którym post zostanie
+oceniony jako zawierający problem? (domyślnie: 0.99),
+* `nagMessage` -> (string) treść wiadomości która będzie wysłana w komentarzu
+do posta zawierającego problem (`{0}` zostanie zamienione na prawdopodobieństwo).
+
+Wszystkie te opcje mogą być ustawione w pliku `appsettings.json` w katalogu
+roboczym. Poza tym, możliwe jest ustawienie poziomu logowania informacji, poprzez `Logging:LogLevel:Default` (dostępne wartości: `Debug`, `Information`, `Warning`
+oraz `Error`).
+
+Przykładowy plik konfiguracyjny:
+
+```json
+{
+  "username": "jakiś użytkownik",
+  "password": "bardzoTAJNEhasl0",
+  "useDebug4p": true,
+  "postComments": false,
+  "timeBetweenUpdates": 30,
+  "threshold": 0.95,
+  "nagMessage": "Hej! Coś jest nie tak z twoim postem!",
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Debug"
+    }
+  }
+}
+```
+
+Jeśli wolisz użyć zmiennych środowiskowych, muszą być poprzedzone prefiksem
+`ELEIA_`, na przykład:
+
+```bash
+export ELEIA_username=jakisuzytkownik
+export ELEIA_useDebug4p=false
+
+# jeśli chcesz ustawić poziom logów, musisz użyć __ jako separatora sekcji
+export ELEIA_Logging__LogLevel__Default=Error
+```
 
 ## Uczenie Maszynowe
 

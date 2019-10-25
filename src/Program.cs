@@ -29,6 +29,7 @@
 
 #endregion License
 
+using CommandLine;
 using Eleia.CoyoteApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +37,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -55,7 +57,77 @@ namespace Eleia
         private static bool postComments;
         private static string nagMessage;
 
+        private static bool runOnce = false;
+        private static bool configured = false;
+        private static bool runOnSet = false;
+        private static int[] runSet;
+
+        public class Options
+        {
+            [Option('u', "username", Default = null, HelpText = "Username to log in with", Required = false)]
+            public string UserName { get; set; }
+
+            [Option('p', "password", Default = null, HelpText = "Password to log in with", Required = false)]
+            public string Password { get; set; }
+
+            [Option('t', "timeBetweenUpdates", Default = null, HelpText = "Time (in minutes) to wait before getting another set of posts", Required = false)]
+            public int? TimeBetweenUpdates { get; set; }
+
+            [Option('n', "nagMessage", Default = null, HelpText = "Message to be posted in comment to post", Required = false)]
+            public string NagMessage { get; set; }
+
+            [Option('d', "useDebug4p", Default = null, HelpText = "Should be used dev.4programmers.info?", Required = false)]
+            public bool? UseDebug4p { get; set; }
+
+            [Option('c', "postComments", Default = null, HelpText = "Should comments be posted to website?", Required = false)]
+            public bool? PostComments { get; set; }
+
+            [Option('r', "runOnce", Default = false, HelpText = "Should the application run only once, or loop?", Required = false)]
+            public bool RunOnce { get; set; }
+
+            [Option('s', "runOnSet", HelpText = "Enables single run on a defined set of post ids, separated by comma.", Required = false)]
+            public string RunOnSet { get; set; }
+        }
+
         private static void Main(string[] args)
+        {
+            var opts = Parser.Default.ParseArguments<Options>(args).WithParsed(Configure);
+
+            if (!configured)
+                return;
+
+            if (runOnSet)
+            {
+                RunOnSet().Wait();
+                return;
+            }
+
+            if (runOnce)
+            {
+                AnalyzeNewPosts().Wait();
+                logger.LogDebug("Single run completed.");
+            }
+            else
+            {
+                while (true)
+                {
+                    AnalyzeNewPosts().Wait();
+                    logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
+                    Thread.Sleep(TimeSpan.FromMinutes(timeBetweenUpdates));
+                }
+            }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "Not a library")]
+        private async static Task RunOnSet()
+        {
+            foreach (var item in runSet.Select(async x => await ch.GetSinglePost(x)))
+            {
+                await AnalyzePost(item.Result);
+            }
+        }
+
+        private static void Configure(Options opts)
         {
             analyzed = new HashSet<int>();
 
@@ -63,17 +135,19 @@ namespace Eleia
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
                 .AddEnvironmentVariables("ELEIA_")
-                .AddCommandLine(args)
                 .Build();
 
-            var username = config.GetValue<string>("username");
-            var password = config.GetValue<string>("password");
-            timeBetweenUpdates = config.GetValue("timeBetweenUpdates", 60);
+            var username = config.GetValue("username", opts.UserName);
+            var password = config.GetValue("password", opts.Password);
+            timeBetweenUpdates = config.GetValue("timeBetweenUpdates", opts.TimeBetweenUpdates ?? 60);
+
+            if (timeBetweenUpdates == 0)
+                opts.RunOnce = true;
 
             nagMessage = config.GetValue("nagMessage", "Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {0})");
 
-            Endpoints.IsDebug = config.GetValue("useDebug4p", true);
-            postComments = config.GetValue("postComments", false);
+            Endpoints.IsDebug = config.GetValue("useDebug4p", opts.UseDebug4p ?? true);
+            postComments = config.GetValue("postComments", opts.PostComments ?? false);
 
             var serviceProvider = new ServiceCollection()
                 .AddLogging(builder => builder
@@ -88,6 +162,7 @@ namespace Eleia
             pa = serviceProvider.GetService<PostAnalyzer>();
 
             logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Eleia");
+
             logger.LogInformation("Eleia is running...");
 
             if (postComments && (username == null || password == null))
@@ -102,20 +177,16 @@ namespace Eleia
             if (postComments)
                 ch.Login(username, password).Wait();
 
-            if (timeBetweenUpdates <= 0)
+            runOnce = opts.RunOnce || timeBetweenUpdates == 0;
+
+            if (!string.IsNullOrEmpty(opts.RunOnSet))
             {
-                AnalyzeNewPosts().Wait();
-                logger.LogDebug("Single run completed");
+                runSet = opts.RunOnSet.Split(',').Select(x => int.Parse(x)).ToArray();
+                if (runSet != null)
+                    runOnSet = true;
             }
-            else if (timeBetweenUpdates > 0)
-            {
-                while (true)
-                {
-                    AnalyzeNewPosts().Wait();
-                    logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
-                    Thread.Sleep(TimeSpan.FromMinutes(timeBetweenUpdates));
-                }
-            }
+
+            configured = true;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "Not a library")]
@@ -133,6 +204,11 @@ namespace Eleia
 
         private static bool IgnorePost(Post post)
         {
+            // posts without forum id (like from --runOnSet)
+            // are never ignored
+            if (post.forum_id == 0)
+                return false;
+
             // ignore everything not in C# subforum
             return !Endpoints.IsDebug && post.forum_id != 24;
         }
