@@ -1,14 +1,12 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Eleia.CoyoteApi
 {
