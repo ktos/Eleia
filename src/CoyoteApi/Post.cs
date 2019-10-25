@@ -44,11 +44,13 @@ namespace Eleia.CoyoteApi
         public Meta meta { get; set; }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SinglePostApiResult
     {
         public SinglePost data { get; set; }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SinglePost
     {
         public int id { get; set; }
@@ -61,9 +63,10 @@ namespace Eleia.CoyoteApi
         public User user { get; set; }
         public string text { get; set; }
         public string url { get; set; }
-        public Comment[] comments { get; set; }
+        public IEnumerable<Comment> comments { get; set; }
     }
 
+    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Comment
     {
         public int id { get; set; }

@@ -167,18 +167,20 @@ namespace Eleia.CoyoteApi
         {
             RemoveXHeaders();
             _logger.LogDebug("Getting new posts");
-            var json = await hc.GetStringAsync($"{Endpoints.PostsApi}/{postId}");
+            var json = await hc.GetStringAsync($"{Endpoints.PostsApi}/{postId}").ConfigureAwait(false);
 
             var result = JsonSerializer.Deserialize<SinglePostApiResult>(json);
 
-            var post = new Post();
-            post.created_at = result.data.created_at;
-            post.forum_id = result.data.forum_id;
-            post.id = result.data.id;
-            post.text = result.data.text;
-            post.topic_id = result.data.topic_id;
-            post.user = result.data.user;
-            post.user_name = result.data.user_name;
+            var post = new Post
+            {
+                created_at = result.data.created_at,
+                forum_id = result.data.forum_id,
+                id = result.data.id,
+                text = result.data.text,
+                topic_id = result.data.topic_id,
+                user = result.data.user,
+                user_name = result.data.user_name
+            };
 
             return post;
         }

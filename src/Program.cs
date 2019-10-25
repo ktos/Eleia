@@ -118,6 +118,7 @@ namespace Eleia
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "Not a library")]
         private async static Task RunOnSet()
         {
             foreach (var item in runSet.Select(async x => await ch.GetSinglePost(x)))
@@ -138,15 +139,15 @@ namespace Eleia
 
             var username = config.GetValue("username", opts.UserName);
             var password = config.GetValue("password", opts.Password);
-            timeBetweenUpdates = config.GetValue("timeBetweenUpdates", opts.TimeBetweenUpdates.HasValue ? opts.TimeBetweenUpdates.Value : 60);
+            timeBetweenUpdates = config.GetValue("timeBetweenUpdates", opts.TimeBetweenUpdates ?? 60);
 
             if (timeBetweenUpdates == 0)
                 opts.RunOnce = true;
 
             nagMessage = config.GetValue("nagMessage", "Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {0})");
 
-            Endpoints.IsDebug = config.GetValue("useDebug4p", opts.UseDebug4p.HasValue ? opts.UseDebug4p.Value : true);
-            postComments = config.GetValue("postComments", opts.PostComments.HasValue ? opts.PostComments.Value : false);
+            Endpoints.IsDebug = config.GetValue("useDebug4p", opts.UseDebug4p ?? true);
+            postComments = config.GetValue("postComments", opts.PostComments ?? false);
 
             var serviceProvider = new ServiceCollection()
                 .AddLogging(builder => builder
