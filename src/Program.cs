@@ -57,6 +57,7 @@ namespace Eleia
         private static string nagMessage;
 
         private static bool runOnce = false;
+        private static bool configured = false;
 
         public class Options
         {
@@ -85,6 +86,9 @@ namespace Eleia
         private static void Main(string[] args)
         {
             var opts = Parser.Default.ParseArguments<Options>(args).WithParsed(Configure);
+
+            if (!configured)
+                return;
 
             if (runOnce)
             {
@@ -153,6 +157,8 @@ namespace Eleia
                 ch.Login(username, password).Wait();
 
             runOnce = opts.RunOnce || timeBetweenUpdates == 0;
+
+            configured = true;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "Not a library")]
