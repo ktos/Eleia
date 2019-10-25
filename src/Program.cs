@@ -37,6 +37,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -58,6 +59,8 @@ namespace Eleia
 
         private static bool runOnce = false;
         private static bool configured = false;
+        private static bool runOnSet = false;
+        private static int[] runSet;
 
         public class Options
         {
@@ -81,6 +84,9 @@ namespace Eleia
 
             [Option('r', "runOnce", Default = false, HelpText = "Should the application run only once, or loop?", Required = false)]
             public bool RunOnce { get; set; }
+
+            [Option('s', "runOnSet", HelpText = "Enables single run on a defined set of post ids, separated by comma.", Required = false)]
+            public string RunOnSet { get; set; }
         }
 
         private static void Main(string[] args)
@@ -89,6 +95,12 @@ namespace Eleia
 
             if (!configured)
                 return;
+
+            if (runOnSet)
+            {
+                RunOnSet().Wait();
+                return;
+            }
 
             if (runOnce)
             {
@@ -103,6 +115,14 @@ namespace Eleia
                     logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
                     Thread.Sleep(TimeSpan.FromMinutes(timeBetweenUpdates));
                 }
+            }
+        }
+
+        private async static Task RunOnSet()
+        {
+            foreach (var item in runSet.Select(async x => await ch.GetSinglePost(x)))
+            {
+                await AnalyzePost(item.Result);
             }
         }
 
@@ -158,6 +178,13 @@ namespace Eleia
 
             runOnce = opts.RunOnce || timeBetweenUpdates == 0;
 
+            if (!string.IsNullOrEmpty(opts.RunOnSet))
+            {
+                runSet = opts.RunOnSet.Split(',').Select(x => int.Parse(x)).ToArray();
+                if (runSet != null)
+                    runOnSet = true;
+            }
+
             configured = true;
         }
 
@@ -176,6 +203,11 @@ namespace Eleia
 
         private static bool IgnorePost(Post post)
         {
+            // posts without forum id (like from --runOnSet)
+            // are never ignored
+            if (post.forum_id == 0)
+                return false;
+
             // ignore everything not in C# subforum
             return !Endpoints.IsDebug && post.forum_id != 24;
         }

@@ -44,6 +44,38 @@ namespace Eleia.CoyoteApi
         public Meta meta { get; set; }
     }
 
+    public class SinglePostApiResult
+    {
+        public SinglePost data { get; set; }
+    }
+
+    public class SinglePost
+    {
+        public int id { get; set; }
+        public object user_name { get; set; }
+        public int score { get; set; }
+        public int edit_count { get; set; }
+        public int forum_id { get; set; }
+        public int topic_id { get; set; }
+        public DateTime created_at { get; set; }
+        public User user { get; set; }
+        public string text { get; set; }
+        public string url { get; set; }
+        public Comment[] comments { get; set; }
+    }
+
+    public class Comment
+    {
+        public int id { get; set; }
+        public int post_id { get; set; }
+        public int user_id { get; set; }
+        public DateTime created_at { get; set; }
+        public DateTime updated_at { get; set; }
+        public object deleted_at { get; set; }
+        public string text { get; set; }
+        public User user { get; set; }
+    }
+
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Post
     {
