@@ -26,32 +26,59 @@ to perform same operations over and over again. Posts which were classified
 one time won't be analyzed again, but this state is in-memory only, so will
 be removed after application restart.
 
-## Usage
+## Usage (CLI)
 
-Eleia must have a configuration before you can use it. You can use configuration
-file `appconfig.json`, environment variables starting with `ELEIA_` prefix or
-use commandline arguments.
+Since version 0.6, Eleia supports a set of commandline parameters to be run
+with, where every is used in a format of `--parameter <value>` or `-p <value>`.
 
-For example, to start Eleia only to watch and analyze new posts, on the dev
-server, you can just simply run:
+* `-u` or `--username` -> username to log in with to Coyote. Default is null,
+and may be null only if `-c` is not `true`.
+* `-p` or `--password` -> password to use in log in,
+* `-t` or `--timeBetweenUpdates` -> time (in minutes) to wait before getting
+another set of posts, if `-s` was not used. If given 0, bot will run only once
+and then finishes the job, like `-r`. Default is 60.
+* `-n` or `--nagMessage` -> message to be posted in comment to post, you can use
+`{0}` in which probability calculated by the model will be put into,
+* `-d` or `--useDebug4p` -> `true` or `false`. If `true`, `dev.4programmers.info`'s
+endpoints will be used instead of `4programmers.net`. Default is `true`.
+* `-c` or `--postComments` -> `true` or `false`. If `true`, after finding problem
+with post, a comment with nag message will be posted to that post. Default is
+`false`.
+* `-r` or `--runOnce` -> `true` or `false`. If `true`, the application will run
+only one time, if not - it will go to sleep for `-t` minutes to perform another
+analysis. Default is `false`.
+* `-s` or `--runOnSet` -> starts a single run (like `-r`) but on provided list of
+post ids, separated by commas, instead of getting new posts. You may use it like
+`-s 1,2,3,4` to analyze posts of id values equal to 1, 2, 3 and 4. Implies `-r`.
+* `--help` -> displays the help screen and exits,
+* `--version` -> displays the version information and exists.
 
-```batch
-eleia
+### Examples
+
+```bash
+# will run only one time, analyze the posts, post comments if threshold is met
+# and exit - on dev version of 4programmers.info
+eleia --u someuser -p someSECRETpassw0rd --useDebug4p true --postComments true --runOnce true
+
+# will run continously analysing posts, sleeping for 15 minutes between getting
+# new set to analyze, won't post comments, will use real 4programmers.net
+eleia -d false -c false -t 15
+
+# will analyze only posts of id 14122 and 221
+eleia --runOnSet 221,14122
 ```
 
-While to run on real 4programmers.net:
+## Configuration via config file and environment variables
 
-```batch
-eleia --useDebug4p false
-```
+Apart from CLI parameters, it's possible to configure application using
+environment variables or configuration file to provide username, password
+and similar. This was considered mainly for Docker images.
 
-To post comments automatically, you need to provide username and password:
+**Warning:** Configuration has a priority over CLI! For example if you set
+the username both in config file and `-u` parameter, value from the config file
+will be used.
 
-```batch
-eleia --username "Some User" --password "Password" --useDebug4p false --postComments true
-```
-
-All possible configuration options are:
+Possible configuration options are:
 
 * `username` -> (string) username to log in with Coyote,
 * `password` -> (string) password to authenticate with Coyote,
@@ -60,6 +87,42 @@ All possible configuration options are:
 * `timeBetweenUpdates` -> (int) what is the time sleeping before getting new batch of posts?,
 * `threshold` -> (float) what is the threshold of "code" classification triggering posting a comment (by default: 0.99),
 * `nagMessage` -> (string) what is the nag message posted as comment? `{0}` will be replaced with probability of unformatted code.
+
+All these options may be used in a `appsettings.json` file in the current directory.
+Apart from that, you may set verbosity level, by setting `Logging:LogLevel:Default`
+configuration option (possible values: `Debug`, `Information`, `Warning` and
+`Error`).
+
+Example configuration file:
+
+```json
+{
+  "username": "some user",
+  "password": "verySECRETpassw0rd!",
+  "useDebug4p": true,
+  "postComments": false,
+  "timeBetweenUpdates": 30,
+  "threshold": 0.95,
+  "nagMessage": "Hey! Something is wrong with code in your post!",
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Debug"
+    }
+  }
+}
+```
+
+If you prefer to use environment variables, they must start with `ELEIA_` prefix,
+e.g.:
+
+```bash
+export ELEIA_username=someuser2
+export ELEIA_useDebug4p=false
+
+# if you want to set verbosity level, you have to use __ as section separator
+export ELEIA_Logging__LogLevel__Default=Error
+```
 
 ## Machine Learning
 
