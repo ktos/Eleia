@@ -97,7 +97,7 @@ steps:
      latest
 
 - script: |
-   docker save eleia:latest -o $(Build.ArtifactStagingDirectory)/eleia-docker-$(GitVersion.SemVer).tar
+   docker save dcr.ktos.dev/eleia:latest -o $(Build.ArtifactStagingDirectory)/eleia-docker-$(GitVersion.SemVer).tar
    gzip $(Build.ArtifactStagingDirectory)/eleia-docker-$(GitVersion.SemVer).tar   
   displayName: 'Saving Docker Image'
 
