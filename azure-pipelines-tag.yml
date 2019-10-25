@@ -81,6 +81,9 @@ steps:
 - script: rm -rf $(Build.BinariesDirectory)/*
   displayName: Clean Binaries Directory
 
+- script: dotnet publish src/*.csproj --configuration $(buildConfiguration) -o $(Build.BinariesDirectory) /p:Version=$(GitVersion.SemVer) /p:InformationalVersion=$(GitVersion.FullSemVer) -r linux-musl-x64
+  displayName: Publish linux-musl-x64
+
 - task: Docker@2
   displayName: 'Build Docker Image'
   inputs:
