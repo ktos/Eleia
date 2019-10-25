@@ -44,8 +44,8 @@ namespace Eleia
     /// </summary>
     public class PostAnalyzer
     {
-        private float codeDetectorTreshold = 0.99f;
-        private CodeDetector codeDetector;
+        private readonly float codeDetectorTreshold = 0.99f;
+        private readonly CodeDetector codeDetector;
 
         /// <summary>
         /// Creates a new instance of PostAnalyzer, loads all detectors used

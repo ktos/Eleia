@@ -30,6 +30,7 @@
 #endregion License
 
 using System;
+using System.Collections.Generic;
 
 namespace Eleia.CoyoteApi
 {
@@ -38,7 +39,7 @@ namespace Eleia.CoyoteApi
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class PostsApiResult
     {
-        public Post[] data { get; set; }
+        public IEnumerable<Post> data { get; set; }
         public Links links { get; set; }
         public Meta meta { get; set; }
     }

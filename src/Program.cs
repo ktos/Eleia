@@ -108,7 +108,7 @@ namespace Eleia
                 AnalyzeNewPosts().Wait();
                 logger.LogDebug("Single run completed");
             }
-            else if(timeBetweenUpdates > 0)
+            else if (timeBetweenUpdates > 0)
             {
                 while (true)
                 {
@@ -116,9 +116,10 @@ namespace Eleia
                     logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
                     Thread.Sleep(TimeSpan.FromMinutes(timeBetweenUpdates));
                 }
-            }           
+            }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "Not a library")]
         private static async Task AnalyzeNewPosts()
         {
             logger.LogDebug("Getting posts...");
@@ -137,6 +138,7 @@ namespace Eleia
             return !Endpoints.IsDebug && post.forum_id != 24;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "Not a library")]
         private static async Task AnalyzePost(Post post)
         {
             if (analyzed.Contains(post.id))

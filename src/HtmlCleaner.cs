@@ -60,8 +60,7 @@ namespace Eleia
         /// <returns>Post content without links to post attachments</returns>
         public static string RemoveDownloadLinks(string postText)
         {
-            postText = Regex.Replace(postText, "<i class=\"fa fa-download(.|\n)*?</li>", "", RegexOptions.Multiline);
-            return postText;
+            return Regex.Replace(postText, "<i class=\"fa fa-download(.|\n)*?</li>", "", RegexOptions.Multiline);
         }
 
         /// <summary>
@@ -82,9 +81,7 @@ namespace Eleia
         public static string StripWhitespace(string item)
         {
             var cleaned = item.Replace("\n", "");
-            cleaned = Regex.Replace(cleaned, @"\s+", " ").Trim();
-
-            return cleaned;
+            return Regex.Replace(cleaned, @"\s+", " ").Trim();
         }
     }
 }

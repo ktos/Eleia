@@ -17,9 +17,9 @@ namespace Eleia.CoyoteApi
     /// </summary>
     public class CoyoteHandler
     {
-        private HttpClient hc;
-        private ILogger _logger;
-        private CookieContainer cookieContainer;
+        private readonly HttpClient hc;
+        private readonly ILogger _logger;
+        private readonly CookieContainer cookieContainer;
         private string csrfToken;
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Eleia.CoyoteApi
         /// <param name="password">Password to be authenticated with</param>
         public async Task Login(string username, string password)
         {
-            await GetCsrfToken();
+            await GetCsrfToken().ConfigureAwait(false);
 
             var data = new FormUrlEncodedContent(new[]
             {
@@ -69,15 +69,14 @@ namespace Eleia.CoyoteApi
             });
 
             _logger.LogDebug("Performing login");
-            var loginResult = await hc.PostAsync(Endpoints.LoginPage, data);
-            var loginResultContent = await loginResult.Content.ReadAsStringAsync();
+            var loginResult = await hc.PostAsync(Endpoints.LoginPage, data).ConfigureAwait(false);
 
             if (!loginResult.IsSuccessStatusCode)
             {
                 _logger.LogError("Login was not successful. Status code: {0}", loginResult.StatusCode);
             }
 
-            await Task.Delay(Delay);
+            await Task.Delay(Delay).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -87,7 +86,7 @@ namespace Eleia.CoyoteApi
         /// <param name="comment">Text of the comment</param>
         public async Task PostComment(Post post, string comment)
         {
-            await GetCsrfToken();
+            await GetCsrfToken().ConfigureAwait(false);
 
             var data = new FormUrlEncodedContent(new[]
             {
@@ -98,7 +97,7 @@ namespace Eleia.CoyoteApi
             _logger.LogDebug("Posting comment");
             hc.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
             hc.DefaultRequestHeaders.Add("X-CSRF-TOKEN", csrfToken);
-            var commentResult = await hc.PostAsync(Endpoints.CommentPage, data);
+            var commentResult = await hc.PostAsync(Endpoints.CommentPage, data).ConfigureAwait(false);
 
             if (!commentResult.IsSuccessStatusCode)
             {
@@ -109,19 +108,19 @@ namespace Eleia.CoyoteApi
                 _logger.LogInformation("Posted comment to post {0}", post.id);
             }
 
-            await Task.Delay(Delay);
+            await Task.Delay(Delay).ConfigureAwait(false);
         }
 
         private async Task GetCsrfToken()
         {
             _logger.LogDebug("Getting CSRF token");
             RemoveXHeaders();
-            var mainPage = await hc.GetAsync(Endpoints.MainPage).Result.Content.ReadAsStringAsync();
+            var mainPage = await hc.GetAsync(Endpoints.MainPage).Result.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var hap = new HtmlDocument();
             hap.LoadHtml(mainPage);
             csrfToken = hap.DocumentNode.SelectSingleNode("/html/head/meta[4]").Attributes[1].Value;
-            await Task.Delay(Delay);
+            await Task.Delay(Delay).ConfigureAwait(false);
         }
 
         private void RemoveXHeaders()
@@ -135,7 +134,7 @@ namespace Eleia.CoyoteApi
         /// </summary>
         public async void Logout()
         {
-            await GetCsrfToken();
+            await GetCsrfToken().ConfigureAwait(false);
 
             var data = new FormUrlEncodedContent(new[]
             {
@@ -143,8 +142,7 @@ namespace Eleia.CoyoteApi
             });
 
             _logger.LogDebug("Performing logout");
-            var loginResult = await hc.PostAsync(Endpoints.LogoutPage, data);
-            var loginResultContent = await loginResult.Content.ReadAsStringAsync();
+            await hc.PostAsync(Endpoints.LogoutPage, data).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -155,7 +153,7 @@ namespace Eleia.CoyoteApi
         {
             RemoveXHeaders();
             _logger.LogDebug("Getting new posts");
-            var json = await hc.GetStringAsync($"{Endpoints.PostsApi}?page={page}");
+            var json = await hc.GetStringAsync($"{Endpoints.PostsApi}?page={page}").ConfigureAwait(false);
 
             var result = JsonSerializer.Deserialize<PostsApiResult>(json);
 

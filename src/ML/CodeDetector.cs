@@ -40,8 +40,8 @@ namespace Eleia.ML
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class CodeDetector
     {
-        private MLContext mlContext;
-        private PredictionEngine<CodeDetectorModelInput, CodeDetectorModelOutput> predEngine;
+        private readonly MLContext mlContext;
+        private readonly PredictionEngine<CodeDetectorModelInput, CodeDetectorModelOutput> predEngine;
 
         /// <summary>
         /// Creates a new instance of CodeDetector, loads ML model into RAM
@@ -50,7 +50,7 @@ namespace Eleia.ML
         {
             mlContext = new MLContext();
             string modelPath = AppDomain.CurrentDomain.BaseDirectory + "MLModel.zip";
-            ITransformer mlModel = mlContext.Model.Load(modelPath, out var modelInputSchema);
+            ITransformer mlModel = mlContext.Model.Load(modelPath, out _);
             predEngine = mlContext.Model.CreatePredictionEngine<CodeDetectorModelInput, CodeDetectorModelOutput>(mlModel);
         }
 
@@ -61,8 +61,10 @@ namespace Eleia.ML
         /// <returns>Is it a text or a code and with what probability</returns>
         public CodeDetectorModelOutput Predict(string text)
         {
-            var input = new CodeDetectorModelInput();
-            input.Content = text;
+            var input = new CodeDetectorModelInput
+            {
+                Content = text
+            };
 
             return predEngine.Predict(input);
         }
