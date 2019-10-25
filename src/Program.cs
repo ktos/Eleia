@@ -56,6 +56,8 @@ namespace Eleia
         private static bool postComments;
         private static string nagMessage;
 
+        private static bool runOnce = false;
+
         public class Options
         {
             [Option('u', "username", Default = null, HelpText = "Username to log in with", Required = false)]
@@ -82,10 +84,25 @@ namespace Eleia
 
         private static void Main(string[] args)
         {
-            var opts = Parser.Default.ParseArguments<Options>(args).WithParsed(MainLoop);
+            var opts = Parser.Default.ParseArguments<Options>(args).WithParsed(Configure);
+
+            if (runOnce)
+            {
+                AnalyzeNewPosts().Wait();
+                logger.LogDebug("Single run completed.");
+            }
+            else
+            {
+                while (true)
+                {
+                    AnalyzeNewPosts().Wait();
+                    logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
+                    Thread.Sleep(TimeSpan.FromMinutes(timeBetweenUpdates));
+                }
+            }
         }
 
-        private static void MainLoop(Options opts)
+        private static void Configure(Options opts)
         {
             analyzed = new HashSet<int>();
 
@@ -98,6 +115,9 @@ namespace Eleia
             var username = config.GetValue("username", opts.UserName);
             var password = config.GetValue("password", opts.Password);
             timeBetweenUpdates = config.GetValue("timeBetweenUpdates", opts.TimeBetweenUpdates.HasValue ? opts.TimeBetweenUpdates.Value : 60);
+
+            if (timeBetweenUpdates == 0)
+                opts.RunOnce = true;
 
             nagMessage = config.GetValue("nagMessage", "Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {0})");
 
@@ -132,20 +152,7 @@ namespace Eleia
             if (postComments)
                 ch.Login(username, password).Wait();
 
-            if (opts.RunOnce || timeBetweenUpdates == 0)
-            {
-                AnalyzeNewPosts().Wait();
-                logger.LogDebug("Single run completed.");
-            }
-            else
-            {
-                while (true)
-                {
-                    AnalyzeNewPosts().Wait();
-                    logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
-                    Thread.Sleep(TimeSpan.FromMinutes(timeBetweenUpdates));
-                }
-            }
+            runOnce = opts.RunOnce || timeBetweenUpdates == 0;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "Not a library")]
