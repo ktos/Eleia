@@ -77,3 +77,30 @@ steps:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/Eleia-$(GitVersion.SemVer)-linux.zip'
     ArtifactName: 'drop'
     publishLocation: 'Container'
+
+- script: rm -rf $(Build.BinariesDirectory)/*
+  displayName: Clean Binaries Directory
+
+- task: Docker@2
+  displayName: 'Build Docker Image'
+  inputs:
+    containerRegistry: 'dcr.ktos.dev Docker Registry'
+    repository: eleia
+    command: build
+    Dockerfile: Dockerfile
+    buildContext: $(Build.BinariesDirectory)
+    tags: |
+     $(GitVersion.SemVer)
+     latest
+
+- script: |
+   docker save eleia:latest -o $(Build.ArtifactStagingDirectory)/eleia-docker-$(GitVersion.SemVer).tar
+   gzip $(Build.ArtifactStagingDirectory)/eleia-docker-$(GitVersion.SemVer).tar   
+  displayName: 'Saving Docker Image'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/eleia-docker-$(GitVersion.SemVer).tar.gz'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
