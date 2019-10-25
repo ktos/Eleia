@@ -1,6 +1,9 @@
 ﻿using Eleia;
 using Eleia.CoyoteApi;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Eleia.Test
@@ -49,6 +52,47 @@ namespace Eleia.Test
             var result = postAnalyzer.Analyze(post);
 
             Assert.Empty(result);
+        }
+
+        [Fact]
+        public void Analyze_PostWithLinksThreshold099_NoProblems()
+        {
+            var myConfiguration = new Dictionary<string, string>
+            {
+                {"threshold", "0.99"}
+            };
+
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(myConfiguration)
+                .Build();
+
+            var postAnalyzer = new PostAnalyzer(configuration);
+            Post post = new Post { text = "<pre><code class=\"language-csharp line-numbers\">protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)\r\n{\r\n    optionsBuilder\r\n        .ConfigureWarnings(w =&gt; w.Throw(RelationalEventId.QueryClientEvaluationWarning));\r\n}</code></pre>\r\n<p>Źródło: </p>\r\n<ol>\r\n<li><a href=\"https://compiledexperience.com/blog/posts/ef-core-client-side-eval\">https://compiledexperience.com/blog/posts/ef-core-client-side-eval</a></li>\r\n<li><a href=\"https://docs.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder.configurewarnings?view=efcore-2.2\">https://docs.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder.configurewarnings?view=efcore-2.2</a></li>\r\n</ol>" };
+
+            var result = postAnalyzer.Analyze(post);
+
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void Analyze_PostWithLinksThreshold08_ProblemsFound()
+        {
+            var myConfiguration = new Dictionary<string, string>
+            {
+                {"threshold", "0.8"}
+            };
+
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(myConfiguration)
+                .Build();
+
+            var postAnalyzer = new PostAnalyzer(configuration);
+            Post post = new Post { text = "<pre><code class=\"language-csharp line-numbers\">protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)\r\n{\r\n    optionsBuilder\r\n        .ConfigureWarnings(w =&gt; w.Throw(RelationalEventId.QueryClientEvaluationWarning));\r\n}</code></pre>\r\n<p>Źródło: </p>\r\n<ol>\r\n<li><a href=\"https://compiledexperience.com/blog/posts/ef-core-client-side-eval\">https://compiledexperience.com/blog/posts/ef-core-client-side-eval</a></li>\r\n<li><a href=\"https://docs.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder.configurewarnings?view=efcore-2.2\">https://docs.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder.configurewarnings?view=efcore-2.2</a></li>\r\n</ol>" };
+
+            var result = postAnalyzer.Analyze(post);
+
+            Assert.Single(result);
+            Assert.IsType<NotFormattedCodeFound>(result[0]);
         }
 
         [Fact]
