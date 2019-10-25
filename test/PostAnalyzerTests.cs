@@ -1,6 +1,9 @@
 ﻿using Eleia;
 using Eleia.CoyoteApi;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Primitives;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Eleia.Test
@@ -52,9 +55,59 @@ namespace Eleia.Test
         }
 
         [Fact]
-        public void Analyze_PostWithUnformattedCode_UnformattedCodeFound()
+        public void Analyze_PostWithLinksThreshold099_NoProblems()
         {
-            var postAnalyzer = new PostAnalyzer(null);
+            var myConfiguration = new Dictionary<string, string>
+            {
+                {"threshold", "0.99"}
+            };
+
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(myConfiguration)
+                .Build();
+
+            var postAnalyzer = new PostAnalyzer(configuration);
+            Post post = new Post { text = "<pre><code class=\"language-csharp line-numbers\">protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)\r\n{\r\n    optionsBuilder\r\n        .ConfigureWarnings(w =&gt; w.Throw(RelationalEventId.QueryClientEvaluationWarning));\r\n}</code></pre>\r\n<p>Źródło: </p>\r\n<ol>\r\n<li><a href=\"https://compiledexperience.com/blog/posts/ef-core-client-side-eval\">https://compiledexperience.com/blog/posts/ef-core-client-side-eval</a></li>\r\n<li><a href=\"https://docs.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder.configurewarnings?view=efcore-2.2\">https://docs.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder.configurewarnings?view=efcore-2.2</a></li>\r\n</ol>" };
+
+            var result = postAnalyzer.Analyze(post);
+
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void Analyze_PostWithLinksThreshold08_ProblemsFound()
+        {
+            var myConfiguration = new Dictionary<string, string>
+            {
+                {"threshold", "0.8"}
+            };
+
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(myConfiguration)
+                .Build();
+
+            var postAnalyzer = new PostAnalyzer(configuration);
+            Post post = new Post { text = "<pre><code class=\"language-csharp line-numbers\">protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)\r\n{\r\n    optionsBuilder\r\n        .ConfigureWarnings(w =&gt; w.Throw(RelationalEventId.QueryClientEvaluationWarning));\r\n}</code></pre>\r\n<p>Źródło: </p>\r\n<ol>\r\n<li><a href=\"https://compiledexperience.com/blog/posts/ef-core-client-side-eval\">https://compiledexperience.com/blog/posts/ef-core-client-side-eval</a></li>\r\n<li><a href=\"https://docs.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder.configurewarnings?view=efcore-2.2\">https://docs.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.dbcontextoptionsbuilder.configurewarnings?view=efcore-2.2</a></li>\r\n</ol>" };
+
+            var result = postAnalyzer.Analyze(post);
+
+            Assert.Single(result);
+            Assert.IsType<NotFormattedCodeFound>(result[0]);
+        }
+
+        [Fact]
+        public void Analyze_PostWithUnformattedCodeThreshold098_UnformattedCodeFound()
+        {
+            var myConfiguration = new Dictionary<string, string>
+            {
+                {"threshold", "0.98"}
+            };
+
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(myConfiguration)
+                .Build();
+
+            var postAnalyzer = new PostAnalyzer(configuration);
             Post post = new Post { text = "<p>Witam zrobilem zadanie , z systemu 10 na system 16, ma ktoś jakiś pomysł na lepsze rozwiązanie?<br />\n#include &lt;iostream&gt;</p>\n<p>using namespace std;</p>\n<p>int main()<br />\n{<br />\nint n;<br />\ncin&gt;&gt;n;<br />\nint w;<br />\nint c=0;<br />\nint tab[c];<br />\nwhile(n&gt;0)<br />\n{<br />\nc++;<br />\nw=n%16;<br />\nn=n/16;</p>\n<pre><code>tab[c]=w;</code></pre>\n<p>}<br />\ncout&lt;&lt;\"System szesnastkowy to: \";<br />\nfor(int i=c; i&gt;0; i--)<br />\n{<br />\nif(tab[i]==10)<br />\n{<br />\ncout&lt;&lt;\"A\";<br />\n}<br />\nelse if(tab[i]==11)<br />\n{<br />\ncout&lt;&lt;\"B\";<br />\n}<br />\nelse if(tab[i]==12)<br />\n{<br />\ncout&lt;&lt;\"C\";<br />\n}<br />\nelse if(tab[i]==13)<br />\n{<br />\ncout&lt;&lt;\"D\";<br />\n}<br />\nelse if(tab[i]==14)<br />\n{<br />\ncout&lt;&lt;\"E\";<br />\n}<br />\nelse if(tab[i]==15)<br />\n{<br />\ncout&lt;&lt;\"F\";<br />\n}<br />\nelse<br />\n{<br />\ncout&lt;&lt;tab[i];<br />\n}<br />\n}<br />\n}</p>" };
 
             var result = postAnalyzer.Analyze(post);
