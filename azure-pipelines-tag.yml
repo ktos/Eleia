@@ -41,18 +41,29 @@ steps:
     pathToSources: 'src/'
     reportDirectory: 'report/'
 
-- script: dotnet publish src/*.csproj --configuration $(buildConfiguration) -o $(Build.BinariesDirectory) /p:Version=$(GitVersion.SemVer) /p:InformationalVersion=$(GitVersion.FullSemVer)
+- script: dotnet publish src/*.csproj --configuration $(buildConfiguration) -o $(Build.BinariesDirectory) /p:Version=$(GitVersion.SemVer) /p:InformationalVersion=$(GitVersion.FullSemVer) -r win-x64
+  displayName: Publish win-x64
 
 - task: ArchiveFiles@2
   displayName: 'Archive $(Build.ArtifactStagingDirectory)'
   inputs:
     includeRootFolder: false
     archiveType: zip
-    archiveFile: '$(Build.ArtifactStagingDirectory)/Eleia-$(GitVersion.SemVer).zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/Eleia-$(GitVersion.SemVer)-win.zip'
+
+- script: dotnet publish src/*.csproj --configuration $(buildConfiguration) -o $(Build.BinariesDirectory) /p:Version=$(GitVersion.SemVer) /p:InformationalVersion=$(GitVersion.FullSemVer) -r linux-x64
+  displayName: Publish linux-x64
+
+- task: ArchiveFiles@2
+  displayName: 'Archive $(Build.ArtifactStagingDirectory)'
+  inputs:
+    includeRootFolder: false
+    archiveType: zip
+    archiveFile: '$(Build.ArtifactStagingDirectory)/Eleia-$(GitVersion.SemVer)-linux.zip'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/Eleia-$(GitVersion.SemVer).zip'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/Eleia-$(GitVersion.SemVer)*.zip'
     ArtifactName: 'drop'
     publishLocation: 'Container'
