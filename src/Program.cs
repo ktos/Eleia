@@ -285,6 +285,8 @@ namespace Eleia
                 return;
 
             analyzed.Add(post.id);
+            SaveAlreadyAnalyzed();
+
             if (IgnorePost(post))
                 return;
 
