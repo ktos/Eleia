@@ -38,6 +38,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -46,6 +47,7 @@ namespace Eleia
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     internal static class Program
     {
+        private const string AnalyzedDatabasePath = "analyzed.bin";
         private static int timeBetweenUpdates;
 
         private static HashSet<int> analyzed;
@@ -62,6 +64,7 @@ namespace Eleia
         private static bool configured = false;
         private static bool runOnSet = false;
         private static int[] runSet;
+        private static bool ignoreAlreadyAnalyzed = false;
 
         public class Options
         {
@@ -91,11 +94,16 @@ namespace Eleia
 
             [Option("blacklist", HelpText = "Disallows defined set of forum ids, separated by comma.", Required = false)]
             public string Blacklist { get; set; }
+
+            [Option("ignoreAlreadyAnalyzed", HelpText = "Ignores already analyzed posts database.", Required = false, Default = false)]
+            public bool IgnoreAlreadyAnalyzed { get; set; }
         }
 
         private static void Main(string[] args)
         {
+            Console.CancelKeyPress += RequestApplicationClose;
             var opts = Parser.Default.ParseArguments<Options>(args).WithParsed(Configure);
+            LoadAlreadyAnalyzed();
 
             if (!configured)
                 return;
@@ -117,9 +125,19 @@ namespace Eleia
                 {
                     AnalyzeNewPosts().Wait();
                     logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
-                    Thread.Sleep(TimeSpan.FromMinutes(timeBetweenUpdates));
+
+                    Task.Delay(TimeSpan.FromMinutes(timeBetweenUpdates)).Wait();
                 }
             }
+
+            SaveAlreadyAnalyzed();
+        }
+
+        private static void RequestApplicationClose(object sender, ConsoleCancelEventArgs e)
+        {
+            logger.LogDebug("Requested application close by {0}", e.SpecialKey);
+            SaveAlreadyAnalyzed();
+            Environment.Exit(0);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "Not a library")]
@@ -131,10 +149,44 @@ namespace Eleia
             }
         }
 
+        private static void LoadAlreadyAnalyzed()
+        {
+            if (ignoreAlreadyAnalyzed)
+            {
+                analyzed = new HashSet<int>();
+                return;
+            }
+
+            if (!File.Exists(AnalyzedDatabasePath))
+            {
+                analyzed = new HashSet<int>();
+            }
+            else
+            {
+                logger.LogInformation("Loading already analyzed posts database.");
+                using (var fs = new FileStream(AnalyzedDatabasePath, FileMode.Open, FileAccess.Read))
+                {
+                    var formatter = new BinaryFormatter();
+                    analyzed = formatter.Deserialize(fs) as HashSet<int>;
+                }
+            }
+        }
+
+        private static void SaveAlreadyAnalyzed()
+        {
+            if (ignoreAlreadyAnalyzed)
+                return;
+
+            using (var fs = new FileStream(AnalyzedDatabasePath, FileMode.Create, FileAccess.Write))
+            {
+                logger.LogInformation("Saving already analyzed ids database.");
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(fs, analyzed);
+            }
+        }
+
         private static void Configure(Options opts)
         {
-            analyzed = new HashSet<int>();
-
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
@@ -193,6 +245,7 @@ namespace Eleia
             var blacklistDefinition = config.GetValue("blacklist", opts.Blacklist ?? string.Empty);
             if (!string.IsNullOrEmpty(blacklistDefinition))
                 blacklist = new Blacklist(blacklistDefinition);
+            ignoreAlreadyAnalyzed = opts.IgnoreAlreadyAnalyzed;
 
             configured = true;
         }
