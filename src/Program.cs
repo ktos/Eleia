@@ -159,15 +159,22 @@ namespace Eleia
 
             if (!File.Exists(AnalyzedDatabasePath))
             {
-                analyzed = new HashSet<int>();
             }
             else
             {
                 logger.LogInformation("Loading already analyzed posts database.");
                 using (var fs = new FileStream(AnalyzedDatabasePath, FileMode.Open, FileAccess.Read))
                 {
-                    var formatter = new BinaryFormatter();
-                    analyzed = formatter.Deserialize(fs) as HashSet<int>;
+                    if (fs.Length == 0)
+                    {
+                        analyzed = new HashSet<int>();
+                        return;
+                    }
+                    else
+                    {
+                        var formatter = new BinaryFormatter();
+                        analyzed = formatter.Deserialize(fs) as HashSet<int>;
+                    }
                 }
             }
         }
