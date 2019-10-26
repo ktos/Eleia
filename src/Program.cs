@@ -58,6 +58,7 @@ namespace Eleia
         private static string nagMessage;
 
         private static bool runOnce = false;
+        private static Blacklist blacklist;
         private static bool configured = false;
         private static bool runOnSet = false;
         private static int[] runSet;
@@ -87,6 +88,9 @@ namespace Eleia
 
             [Option('s', "runOnSet", HelpText = "Enables single run on a defined set of post ids, separated by comma.", Required = false)]
             public string RunOnSet { get; set; }
+
+            [Option("blacklist", HelpText = "Disallows defined set of forum ids, separated by comma.", Required = false)]
+            public string Blacklist { get; set; }
         }
 
         private static void Main(string[] args)
@@ -186,6 +190,10 @@ namespace Eleia
                     runOnSet = true;
             }
 
+            var blacklistDefinition = config.GetValue("blacklist", opts.Blacklist ?? string.Empty);
+            if (!string.IsNullOrEmpty(blacklistDefinition))
+                blacklist = new Blacklist(blacklistDefinition);
+
             configured = true;
         }
 
@@ -204,13 +212,10 @@ namespace Eleia
 
         private static bool IgnorePost(Post post)
         {
-            // posts without forum id (like from --runOnSet)
-            // are never ignored
-            if (post.forum_id == 0)
+            if (blacklist == null)
                 return false;
-
-            // ignore everything not in C# subforum
-            return !Endpoints.IsDebug && post.forum_id != 24;
+            else
+                return blacklist.IsDisallowed(post);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "Not a library")]
