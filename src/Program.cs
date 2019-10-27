@@ -35,10 +35,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -53,9 +51,9 @@ namespace Eleia
         private static Bot bot;
         private static ILogger logger;
 
-        private static bool runOnce = false;
-        private static bool configured = false;
-        private static bool runOnSet = false;
+        private static bool isRunOnce = false;
+        private static bool isConfigured = false;
+        private static bool isRunSet = false;
         private static int[] runSet;
 
         public class Options
@@ -97,18 +95,18 @@ namespace Eleia
             Console.CancelKeyPress += RequestApplicationClose;
             var opts = Parser.Default.ParseArguments<Options>(args).WithParsed(Configure);
 
-            if (!configured)
+            if (!isConfigured)
                 return;
 
             bot.LoadAlreadyAnalyzed();
 
-            if (runOnSet)
+            if (isRunSet)
             {
                 bot.AnalyzePostsByIdsAsync(runSet).Wait();
                 return;
             }
 
-            if (runOnce)
+            if (isRunOnce)
             {
                 bot.AnalyzeNewPostsAsync().Wait();
                 logger.LogDebug("Single run completed.");
@@ -125,13 +123,14 @@ namespace Eleia
             }
 
             bot.SaveAlreadyAnalyzed();
+            Task.Delay(TimeSpan.FromSeconds(1)).Wait();
         }
 
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         private static void RequestApplicationClose(object sender, ConsoleCancelEventArgs e)
         {
-            logger.LogDebug("Requested application close by {0}", e.SpecialKey);
-            bot.SaveAlreadyAnalyzed();
+            logger?.LogDebug("Requested application close by {0}", e.SpecialKey);
+            bot?.SaveAlreadyAnalyzed();
             Environment.Exit(0);
         }
 
@@ -153,6 +152,7 @@ namespace Eleia
                 .AddSingleton<CoyoteHandler>()
                 .AddSingleton<PostAnalyzer>()
                 .AddSingleton<Bot>()
+                .AddSingleton<Blacklist>()
                 .BuildServiceProvider();
 
             bot = serviceProvider.GetService<Bot>();
@@ -184,13 +184,13 @@ namespace Eleia
             if (bot.PostComments)
                 bot.LoginAsync(username, password).Wait();
 
-            runOnce = opts.RunOnce || timeBetweenUpdates == 0;
+            isRunOnce = opts.RunOnce || timeBetweenUpdates == 0;
 
             if (!string.IsNullOrEmpty(opts.RunOnSet))
             {
                 runSet = opts.RunOnSet.Split(',').Select(x => int.Parse(x)).ToArray();
                 if (runSet != null)
-                    runOnSet = true;
+                    isRunSet = true;
             }
 
             var blacklistDefinition = config.GetValue("blacklist", opts.Blacklist ?? string.Empty);
@@ -199,7 +199,7 @@ namespace Eleia
 
             bot.IgnoreAlreadyAnalyzed = opts.IgnoreAlreadyAnalyzed;
 
-            configured = true;
+            isConfigured = true;
         }
     }
 }

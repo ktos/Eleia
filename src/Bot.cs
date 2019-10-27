@@ -113,19 +113,17 @@ namespace Eleia
             }
             else
             {
-                logger.LogInformation("Loading already analyzed posts database.");
-                using (var fs = new FileStream(AnalyzedDatabasePath, FileMode.Open, FileAccess.Read))
+                logger.LogDebug("Loading already analyzed posts database.");
+                using var fs = new FileStream(AnalyzedDatabasePath, FileMode.Open, FileAccess.Read);
+                if (fs.Length == 0)
                 {
-                    if (fs.Length == 0)
-                    {
-                        analyzed = new HashSet<int>();
-                        return;
-                    }
-                    else
-                    {
-                        var formatter = new BinaryFormatter();
-                        analyzed = formatter.Deserialize(fs) as HashSet<int>;
-                    }
+                    analyzed = new HashSet<int>();
+                    return;
+                }
+                else
+                {
+                    var formatter = new BinaryFormatter();
+                    analyzed = formatter.Deserialize(fs) as HashSet<int>;
                 }
             }
         }
@@ -138,12 +136,10 @@ namespace Eleia
             if (IgnoreAlreadyAnalyzed)
                 return;
 
-            using (var fs = new FileStream(AnalyzedDatabasePath, FileMode.Create, FileAccess.Write))
-            {
-                logger.LogInformation("Saving already analyzed ids database.");
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(fs, analyzed);
-            }
+            using var fs = new FileStream(AnalyzedDatabasePath, FileMode.Create, FileAccess.Write);
+            logger.LogDebug("Saving already analyzed ids database.");
+            var formatter = new BinaryFormatter();
+            formatter.Serialize(fs, analyzed);
         }
 
         /// <summary>
@@ -152,9 +148,9 @@ namespace Eleia
         /// <param name="postIds">A list of post ids to analyze</param>
         public async Task AnalyzePostsByIdsAsync(int[] postIds)
         {
-            foreach (var item in postIds.Select(async x => await coyoteHandler.GetSinglePost(x)))
+            foreach (var item in postIds.Select(async x => await coyoteHandler.GetSinglePost(x).ConfigureAwait(false)))
             {
-                await AnalyzePostAsync(item.Result);
+                await AnalyzePostAsync(item.Result).ConfigureAwait(false);
             }
         }
 
@@ -165,15 +161,21 @@ namespace Eleia
         public async Task AnalyzePostAsync(Post post)
         {
             if (analyzed.Contains(post.id))
+            {
+                logger.LogDebug("Ignoring post {0} because already analyzed", post.id);
                 return;
+            }
 
             analyzed.Add(post.id);
             SaveAlreadyAnalyzed();
 
             if (IgnorePost(post))
+            {
+                logger.LogDebug("Ignoring post {0} because of blacklist", post.id);
                 return;
+            }
 
-            logger.LogDebug("Analyzing post {0}", post.id);
+            logger.LogInformation("Analyzing post {0}", post.id);
             var problems = postAnalyzer.Analyze(post);
 
             if (problems.Count > 0)
@@ -181,12 +183,12 @@ namespace Eleia
                 logger.LogInformation("Found problems in post {0}\n{1}\n{2}", post.id, post.url, post.text.Length < 50 ? post.text : post.text.Substring(0, 50));
                 foreach (var item in problems)
                 {
-                    logger.LogInformation(item.ToString());
+                    logger.LogDebug(item.ToString());
 
                     if (PostComments)
                     {
-                        logger.LogDebug("Posting comment");
-                        await coyoteHandler.PostComment(post, string.Format(NagMessage, item.Probability));
+                        logger.LogInformation("Posting comment");
+                        await coyoteHandler.PostComment(post, string.Format(NagMessage, item.Probability)).ConfigureAwait(false);
                     }
                 }
             }
@@ -199,7 +201,7 @@ namespace Eleia
         /// <param name="password">Password to log in with</param>
         public async Task LoginAsync(string username, string password)
         {
-            await coyoteHandler.Login(username, password);
+            await coyoteHandler.Login(username, password).ConfigureAwait(false);
         }
 
         private bool IgnorePost(Post post)
@@ -217,11 +219,11 @@ namespace Eleia
         public async Task AnalyzeNewPostsAsync()
         {
             logger.LogDebug("Getting posts...");
-            var posts = await coyoteHandler.GetPosts();
+            var posts = await coyoteHandler.GetPosts().ConfigureAwait(false);
 
             foreach (var post in posts)
             {
-                await AnalyzePostAsync(post);
+                await AnalyzePostAsync(post).ConfigureAwait(false);
             }
             logger.LogDebug("Analyzed (or ignored) everything");
         }
