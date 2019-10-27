@@ -206,9 +206,6 @@ namespace Eleia
             var password = config.GetValue("password", opts.Password);
             timeBetweenUpdates = config.GetValue("timeBetweenUpdates", opts.TimeBetweenUpdates ?? 60);
 
-            if (timeBetweenUpdates == 0)
-                opts.RunOnce = true;
-
             nagMessage = config.GetValue("nagMessage", "Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {0})");
 
             Endpoints.IsDebug = config.GetValue("useDebug4p", opts.UseDebug4p ?? true);
