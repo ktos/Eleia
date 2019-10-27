@@ -50,21 +50,13 @@ namespace Eleia
         private const string AnalyzedDatabasePath = "analyzed.bin";
         private static int timeBetweenUpdates;
 
-        private static HashSet<int> analyzed;
-
+        private static Bot bot;
         private static ILogger logger;
 
-        private static PostAnalyzer pa;
-        private static CoyoteHandler ch;
-        private static bool postComments;
-        private static string nagMessage;
-
         private static bool runOnce = false;
-        private static Blacklist blacklist;
         private static bool configured = false;
         private static bool runOnSet = false;
         private static int[] runSet;
-        private static bool ignoreAlreadyAnalyzed = false;
 
         public class Options
         {
@@ -99,6 +91,7 @@ namespace Eleia
             public bool IgnoreAlreadyAnalyzed { get; set; }
         }
 
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         private static void Main(string[] args)
         {
             Console.CancelKeyPress += RequestApplicationClose;
@@ -107,93 +100,43 @@ namespace Eleia
             if (!configured)
                 return;
 
-            LoadAlreadyAnalyzed();
+            bot.LoadAlreadyAnalyzed();
 
             if (runOnSet)
             {
-                RunOnSet().Wait();
+                bot.AnalyzePostsByIdsAsync(runSet).Wait();
                 return;
             }
 
             if (runOnce)
             {
-                AnalyzeNewPosts().Wait();
+                bot.AnalyzeNewPostsAsync().Wait();
                 logger.LogDebug("Single run completed.");
             }
             else
             {
                 while (true)
                 {
-                    AnalyzeNewPosts().Wait();
+                    bot.AnalyzeNewPostsAsync().Wait();
                     logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
 
                     Task.Delay(TimeSpan.FromMinutes(timeBetweenUpdates)).Wait();
                 }
             }
 
-            SaveAlreadyAnalyzed();
+            bot.SaveAlreadyAnalyzed();
         }
 
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         private static void RequestApplicationClose(object sender, ConsoleCancelEventArgs e)
         {
             logger.LogDebug("Requested application close by {0}", e.SpecialKey);
-            SaveAlreadyAnalyzed();
+            bot.SaveAlreadyAnalyzed();
             Environment.Exit(0);
         }
 
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "Not a library")]
-        private async static Task RunOnSet()
-        {
-            foreach (var item in runSet.Select(async x => await ch.GetSinglePost(x)))
-            {
-                await AnalyzePost(item.Result);
-            }
-        }
-
-        private static void LoadAlreadyAnalyzed()
-        {
-            if (ignoreAlreadyAnalyzed)
-            {
-                analyzed = new HashSet<int>();
-                return;
-            }
-
-            if (!File.Exists(AnalyzedDatabasePath))
-            {
-                analyzed = new HashSet<int>();
-            }
-            else
-            {
-                logger.LogInformation("Loading already analyzed posts database.");
-                using (var fs = new FileStream(AnalyzedDatabasePath, FileMode.Open, FileAccess.Read))
-                {
-                    if (fs.Length == 0)
-                    {
-                        analyzed = new HashSet<int>();
-                        return;
-                    }
-                    else
-                    {
-                        var formatter = new BinaryFormatter();
-                        analyzed = formatter.Deserialize(fs) as HashSet<int>;
-                    }
-                }
-            }
-        }
-
-        private static void SaveAlreadyAnalyzed()
-        {
-            if (ignoreAlreadyAnalyzed)
-                return;
-
-            using (var fs = new FileStream(AnalyzedDatabasePath, FileMode.Create, FileAccess.Write))
-            {
-                logger.LogInformation("Saving already analyzed ids database.");
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(fs, analyzed);
-            }
-        }
-
         private static void Configure(Options opts)
         {
             var config = new ConfigurationBuilder()
@@ -202,42 +145,44 @@ namespace Eleia
                 .AddEnvironmentVariables("ELEIA_")
                 .Build();
 
-            var username = config.GetValue("username", opts.UserName);
-            var password = config.GetValue("password", opts.Password);
-            timeBetweenUpdates = config.GetValue("timeBetweenUpdates", opts.TimeBetweenUpdates ?? 60);
-
-            nagMessage = config.GetValue("nagMessage", "Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {0})");
-
-            Endpoints.IsDebug = config.GetValue("useDebug4p", opts.UseDebug4p ?? true);
-            postComments = config.GetValue("postComments", opts.PostComments ?? false);
-
             var serviceProvider = new ServiceCollection()
                 .AddLogging(builder => builder
                     .AddConfiguration(config.GetSection("Logging"))
                     .AddConsole())
                 .AddSingleton(config)
-                .AddTransient<CoyoteHandler>()
-                .AddTransient<PostAnalyzer>()
+                .AddSingleton<CoyoteHandler>()
+                .AddSingleton<PostAnalyzer>()
+                .AddSingleton<Bot>()
                 .BuildServiceProvider();
 
-            ch = serviceProvider.GetService<CoyoteHandler>();
-            pa = serviceProvider.GetService<PostAnalyzer>();
+            bot = serviceProvider.GetService<Bot>();
+
+            bot.AnalyzedDatabasePath = AnalyzedDatabasePath;
 
             logger = serviceProvider.GetService<ILoggerFactory>().CreateLogger("Eleia");
 
+            var username = config.GetValue("username", opts.UserName);
+            var password = config.GetValue("password", opts.Password);
+            timeBetweenUpdates = config.GetValue("timeBetweenUpdates", opts.TimeBetweenUpdates ?? 60);
+
+            bot.NagMessage = config.GetValue("nagMessage", "Hej! Twój post prawdopodobnie zawiera niesformatowany kod. Użyj znaczników ``` aby oznaczyć, co jest kodem, będzie łatwiej czytać. (jestem botem, ta akcja została wykonana automatycznie, prawdopodobieństwo {0})");
+
+            Endpoints.IsDebug = config.GetValue("useDebug4p", opts.UseDebug4p ?? true);
+            bot.PostComments = config.GetValue("postComments", opts.PostComments ?? false);
+
             logger.LogInformation("Eleia is running...");
 
-            if (postComments && (username == null || password == null))
+            if (bot.PostComments && (username == null || password == null))
             {
                 logger.LogError("Username or password is not provided, but posting comments is set. Exiting.");
                 Thread.Sleep(100);
                 Environment.Exit(1);
             }
 
-            logger.LogDebug("Will use username: {0}, will post comments: {1}, will use real 4programmers.net: {2}", username, postComments, !Endpoints.IsDebug);
+            logger.LogDebug("Will use username: {0}, will post comments: {1}, will use real 4programmers.net: {2}", username, bot.PostComments, !Endpoints.IsDebug);
 
-            if (postComments)
-                ch.Login(username, password).Wait();
+            if (bot.PostComments)
+                bot.LoginAsync(username, password).Wait();
 
             runOnce = opts.RunOnce || timeBetweenUpdates == 0;
 
@@ -250,62 +195,11 @@ namespace Eleia
 
             var blacklistDefinition = config.GetValue("blacklist", opts.Blacklist ?? string.Empty);
             if (!string.IsNullOrEmpty(blacklistDefinition))
-                blacklist = new Blacklist(blacklistDefinition);
-            ignoreAlreadyAnalyzed = opts.IgnoreAlreadyAnalyzed;
+                bot.BlacklistDefinition = blacklistDefinition;
+
+            bot.IgnoreAlreadyAnalyzed = opts.IgnoreAlreadyAnalyzed;
 
             configured = true;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "Not a library")]
-        private static async Task AnalyzeNewPosts()
-        {
-            logger.LogDebug("Getting posts...");
-            var posts = await ch.GetPosts();
-
-            foreach (var post in posts)
-            {
-                await AnalyzePost(post);
-            }
-            logger.LogDebug("Analyzed (or ignored) everything");
-        }
-
-        private static bool IgnorePost(Post post)
-        {
-            if (blacklist == null)
-                return false;
-            else
-                return blacklist.IsDisallowed(post);
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "Not a library")]
-        private static async Task AnalyzePost(Post post)
-        {
-            if (analyzed.Contains(post.id))
-                return;
-
-            analyzed.Add(post.id);
-            SaveAlreadyAnalyzed();
-
-            if (IgnorePost(post))
-                return;
-
-            logger.LogDebug("Analyzing post {0}", post.id);
-            var problems = pa.Analyze(post);
-
-            if (problems.Count > 0)
-            {
-                logger.LogInformation("Found problems in post {0}\n{1}\n{2}", post.id, post.url, post.text.Length < 50 ? post.text : post.text.Substring(0, 50));
-                foreach (var item in problems)
-                {
-                    logger.LogInformation(item.ToString());
-
-                    if (postComments)
-                    {
-                        logger.LogDebug("Posting comment");
-                        await ch.PostComment(post, string.Format(nagMessage, item.Probability));
-                    }
-                }
-            }
         }
     }
 }

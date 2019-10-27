@@ -45,11 +45,17 @@ namespace Eleia
         /// <summary>
         /// Creates a new instance of blacklist based on a definition string
         /// </summary>
-        /// <param name="definition">A comma-separated list of forum ids</param>
-        public Blacklist(string definition)
+        public Blacklist()
         {
             forums = new HashSet<int>();
+        }
 
+        /// <summary>
+        /// Updates a blacklist with a new definition string
+        /// </summary>
+        /// <param name="definition">A comma-separated list of forum ids</param>
+        public void UpdateDefinition(string definition)
+        {
             forums.UnionWith(definition.Split(',').Select(x => int.Parse(x)));
         }
 

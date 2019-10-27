@@ -11,7 +11,8 @@ namespace Eleia.Test
         public void IsDisallowed_OneForumIdMatched_Blocked()
         {
             // Arrange
-            var blacklist = new Blacklist("1");
+            var blacklist = new Blacklist();
+            blacklist.UpdateDefinition("1");
             var post = new Post { forum_id = 1 };
 
             // Act
@@ -24,7 +25,8 @@ namespace Eleia.Test
         [Fact]
         public void IsDisallowed_OneForumIdNotMatched_Allowed()
         {
-            var blacklist = new Blacklist("1");
+            var blacklist = new Blacklist();
+            blacklist.UpdateDefinition("1");
             var post = new Post { forum_id = 2 };
 
             var result = blacklist.IsDisallowed(post);
@@ -35,7 +37,8 @@ namespace Eleia.Test
         [Fact]
         public void IsDisallowed_ManyForumIdsNotMatched_AllAllowed()
         {
-            var blacklist = new Blacklist("1,2,3");
+            var blacklist = new Blacklist();
+            blacklist.UpdateDefinition("1,2,3");
             var posts = new Post[] {
                 new Post { forum_id = 4 },
                 new Post { forum_id = 5 },
@@ -52,7 +55,8 @@ namespace Eleia.Test
         [Fact]
         public void IsDisallowed_ManyForumIdsMatched_AllBlocked()
         {
-            var blacklist = new Blacklist("1,2,3,4");
+            var blacklist = new Blacklist();
+            blacklist.UpdateDefinition("1,2,3,4");
             var posts = new Post[] {
                 new Post { forum_id = 1 },
                 new Post { forum_id = 2 },
