@@ -50,6 +50,10 @@ Dmyślnie `false`.
 * `-s` lub `--runOnSet` -> uruchamia pojedynczą analizę, ale tylko na postach,
 których id zostały przekazane w wartości polecenia (rozdzielone przecinkami).
 Na przykład `-s 1,2` przeanalizuje posty o id 1 oraz 2. Implikuje `-r`.
+* `--blacklist` -> oddzielana przecinkami lista identyfikatorów subforów, z
+których posty będą ignorowane,
+* `--ignoreAlreadyAnalyzed` -> ignoruje bazę danych już zanalizowanych postów,
+nie tworzy jej przy wyjściu, nie ładuje przy uruchomieniu,
 * `--help` -> wyświetla ekran pomocy i kończy działanie,
 * `--version` -> wyświetla informacje o wersji i kończy działanie.
 
@@ -91,6 +95,8 @@ postów (w minutach)?,
 oceniony jako zawierający problem? (domyślnie: 0.99),
 * `nagMessage` -> (string) treść wiadomości która będzie wysłana w komentarzu
 do posta zawierającego problem (`{0}` zostanie zamienione na prawdopodobieństwo).
+* `blacklist` -> (string) oddzielana przecinkami lista identyfikatorów subforów
+z których posty będą ignorowane.
 
 Wszystkie te opcje mogą być ustawione w pliku `appsettings.json` w katalogu
 roboczym. Poza tym, możliwe jest ustawienie poziomu logowania informacji, poprzez `Logging:LogLevel:Default` (dostępne wartości: `Debug`, `Information`, `Warning`

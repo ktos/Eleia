@@ -50,6 +50,11 @@ analysis. Default is `false`.
 * `-s` or `--runOnSet` -> starts a single run (like `-r`) but on provided list of
 post ids, separated by commas, instead of getting new posts. You may use it like
 `-s 1,2,3,4` to analyze posts of id values equal to 1, 2, 3 and 4. Implies `-r`.
+* `--blacklist` -> comma separated list of forum ids, from which posts will be
+ignored,
+* `--ignoreAlreadyAnalyzed` -> ignores "already analyzed" database, analyzes
+every post from not blacklisted forums, does not create "already analyzed"
+database on exit,
 * `--help` -> displays the help screen and exits,
 * `--version` -> displays the version information and exists.
 
@@ -86,7 +91,8 @@ Possible configuration options are:
 * `postComments` -> (bool) should post comments when unformatted code is found?,
 * `timeBetweenUpdates` -> (int) what is the time sleeping before getting new batch of posts?,
 * `threshold` -> (float) what is the threshold of "code" classification triggering posting a comment (by default: 0.99),
-* `nagMessage` -> (string) what is the nag message posted as comment? `{0}` will be replaced with probability of unformatted code.
+* `nagMessage` -> (string) what is the nag message posted as comment? `{0}` will be replaced with probability of unformatted code,
+* `blacklist` -> (string) comma-separated list of forum ids from which posts will be ignored.
 
 All these options may be used in a `appsettings.json` file in the current directory.
 Apart from that, you may set verbosity level, by setting `Logging:LogLevel:Default`
