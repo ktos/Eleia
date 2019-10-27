@@ -159,6 +159,7 @@ namespace Eleia
 
             if (!File.Exists(AnalyzedDatabasePath))
             {
+                analyzed = new HashSet<int>();
             }
             else
             {
