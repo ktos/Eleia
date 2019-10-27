@@ -48,7 +48,11 @@ namespace Eleia
         private readonly PostAnalyzer postAnalyzer;
         private readonly Blacklist blacklist;
         private readonly ILogger logger;
-        private HashSet<int> analyzed;
+
+        /// <summary>
+        /// Database with already analyzed post ids
+        /// </summary>
+        public HashSet<int> AlreadyAnalyzedDatabase { get; set; }
 
         /// <summary>
         /// Gets or sets if the database of already analyzed posts should be used
@@ -103,13 +107,13 @@ namespace Eleia
         {
             if (IgnoreAlreadyAnalyzed)
             {
-                analyzed = new HashSet<int>();
+                AlreadyAnalyzedDatabase = new HashSet<int>();
                 return;
             }
 
             if (!File.Exists(AnalyzedDatabasePath))
             {
-                analyzed = new HashSet<int>();
+                AlreadyAnalyzedDatabase = new HashSet<int>();
             }
             else
             {
@@ -117,13 +121,13 @@ namespace Eleia
                 using var fs = new FileStream(AnalyzedDatabasePath, FileMode.Open, FileAccess.Read);
                 if (fs.Length == 0)
                 {
-                    analyzed = new HashSet<int>();
+                    AlreadyAnalyzedDatabase = new HashSet<int>();
                     return;
                 }
                 else
                 {
                     var formatter = new BinaryFormatter();
-                    analyzed = formatter.Deserialize(fs) as HashSet<int>;
+                    AlreadyAnalyzedDatabase = formatter.Deserialize(fs) as HashSet<int>;
                 }
             }
         }
@@ -139,7 +143,7 @@ namespace Eleia
             using var fs = new FileStream(AnalyzedDatabasePath, FileMode.Create, FileAccess.Write);
             logger.LogDebug("Saving already analyzed ids database.");
             var formatter = new BinaryFormatter();
-            formatter.Serialize(fs, analyzed);
+            formatter.Serialize(fs, AlreadyAnalyzedDatabase);
         }
 
         /// <summary>
@@ -160,13 +164,13 @@ namespace Eleia
         /// <param name="post">Post to be analyzed</param>
         public async Task AnalyzePostAsync(Post post)
         {
-            if (analyzed.Contains(post.id))
+            if (AlreadyAnalyzedDatabase.Contains(post.id))
             {
                 logger.LogDebug("Ignoring post {0} because already analyzed", post.id);
                 return;
             }
 
-            analyzed.Add(post.id);
+            AlreadyAnalyzedDatabase.Add(post.id);
             SaveAlreadyAnalyzed();
 
             if (IgnorePost(post))
@@ -206,16 +210,12 @@ namespace Eleia
 
         private bool IgnorePost(Post post)
         {
-            if (blacklist == null)
-                return false;
-            else
-                return blacklist.IsDisallowed(post);
+            return blacklist.IsDisallowed(post);
         }
 
         /// <summary>
         /// Get new posts from the last first page of posts set and analyze them
         /// </summary>
-        /// <returns></returns>
         public async Task AnalyzeNewPostsAsync()
         {
             logger.LogDebug("Getting posts...");

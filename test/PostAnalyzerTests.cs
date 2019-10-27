@@ -115,5 +115,13 @@ namespace Eleia.Test
             Assert.Single(result);
             Assert.IsType<NotFormattedCodeFound>(result[0]);
         }
+
+        [Fact]
+        public void NotFormattedCodeFoundToString_WithValue_ShouldReturnProbabilityInText()
+        {
+            var pp = new NotFormattedCodeFound { Probability = 0.123f };
+
+            Assert.Contains("123", pp.ToString());
+        }
     }
 }
