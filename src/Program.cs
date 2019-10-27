@@ -103,10 +103,11 @@ namespace Eleia
         {
             Console.CancelKeyPress += RequestApplicationClose;
             var opts = Parser.Default.ParseArguments<Options>(args).WithParsed(Configure);
-            LoadAlreadyAnalyzed();
 
             if (!configured)
                 return;
+
+            LoadAlreadyAnalyzed();
 
             if (runOnSet)
             {
