@@ -138,11 +138,17 @@ export ELEIA_Logging__LogLevel__Default=Error
 Został wykonany ML.NET do wykorzystania modelu binarnej klasyfikacji, natomiast
 AutoML (tj. `mlnet auto-train`) zostało wykorzystane do wygenerowania modelu.
 
+Konkretnie:
+
+```batch
+mlnet auto-train -T binary-classification -d trainingdata2.tsv -o ML --label-column-name code -x 180
+```
+
 [trainingdata2.tsv](https://github.com/ktos/Eleia/blob/master/trainingdata2.tsv)
 to plik, na którym model był trenowany.
 
 [trainingdata2.log](https://github.com/ktos/Eleia/blob/master/trainingdata2.log)
-to log z autotreningu, SdcaLogisticRegressionBinary z dokładnością 0,9585 został
+to log z autotreningu, SdcaLogisticRegressionBinary z dokładnością 0,9572 został
 ostatecznie wykorzystany.
 
 Uruchamiałem też dłuższe sesje trenujące niż 180 sekund, ale nadal ten algorytm

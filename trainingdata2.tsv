@@ -1,3 +1,4 @@
+code	text
 0	Pierwszy wynik w google.
 1	/** Return true if the player with "theSeed" has won after placing at (currentRow, currentCol) */ public static boolean hasWon(int theSeed, int currentRow, int currentCol) { return (board[currentRow][0] == theSeed // 3-in-the-row &amp;&amp; board[currentRow][1] == theSeed &amp;&amp; board[currentRow][2] == theSeed || board[0][currentCol] == theSeed // 3-in-the-column &amp;&amp; board[1][currentCol] == theSeed &amp;&amp; board[2][currentCol] == theSeed || currentRow == currentCol // 3-in-the-diagonal &amp;&amp; board[0][0] == theSeed &amp;&amp; board[1][1] == theSeed &amp;&amp; board[2][2] == theSeed || currentRow + currentCol == 2 // 3-in-the-opposite-diagonal &amp;&amp; board[0][2] == theSeed &amp;&amp; board[1][1] == theSeed &amp;&amp; board[2][0] == theSeed); }
 0	go.anna3 minuty temuWitam,mam pytanie, ponieważ programuje w javie gre kólko krzyzyk. Mam napisany kod dla wygranych kolumn i wierszy - ale nie wiem jak zrobic jeszcze przekatne. Czy jest ktoś mi w stanie pomoc bo nie wiem co robie zle ze mi nie wychodzi:
@@ -1967,3 +1968,7 @@
 0	Zwrocenie JSONa byloby proste, ale czy to nie lamie CQRS? Bo zwrocenie calego obiektu to jednak nie to samo co zwrocenie samego ID - trzeba wykonac mapowanie itd.
 0	Można to zacząć tak?$tabx = ['2', '2.5', '3', '3.5', '4', '4.5', '5', '5.5', '6', '6.5'];
 0	Dzięki za szybką odpowiedź.Już widzę właśnie że w .NET Core nie można wizualnie edytować formatek oraz, że okno dopasowuje się do systemu. Chyba najpierw podziobię w tym WinForms coś. Jakieś proste aplikacje, by się trochę oswoić i wdrożyć w ogóle w C#, a później będę się zastanawiał co dalej. Bez jakichkolwiek fundamentów to będzie mi trudno we wszystkim więc trzeba zacząć od czegoś prostego, by się nie zniechęcić.
+0	https://spark.apache.org/docs[...]ing-guide.html#rdd-operations
+0	All transformations in Spark are lazy, in that they do not compute their results right away. Instead, they just remember the transformations applied to some base dataset (e.g. a file). The transformations are only computed when an action requires a result to be returned to the driver program.
+0	output =
+0	"Review changes from IDE - Participate in discussions and manage your reviews without leaving the comfort of your IDE."

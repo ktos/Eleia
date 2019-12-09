@@ -96,11 +96,11 @@ namespace Eleia.Test
         }
 
         [Fact]
-        public void Analyze_PostWithUnformattedCodeThreshold098_UnformattedCodeFound()
+        public void Analyze_PostWithUnformattedCodeThreshold097_UnformattedCodeFound()
         {
             var myConfiguration = new Dictionary<string, string>
             {
-                {"threshold", "0.98"}
+                {"threshold", "0.97"}
             };
 
             var configuration = new ConfigurationBuilder()

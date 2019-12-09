@@ -135,12 +135,18 @@ export ELEIA_Logging__LogLevel__Default=Error
 It is using ML.NET framework to perform machine learning-based binary classification,
 and AutoML (`mlnet auto-train`) was used to generate model.
 
+Exact run:
+
+```batch
+mlnet auto-train -T binary-classification -d trainingdata2.tsv -o ML --label-column-name code -x 180
+```
+
 [trainingdata2.tsv](https://github.com/ktos/Eleia/blob/master/trainingdata2.tsv)
 was a file which the training was performed on.
 
 [trainingdata2.log](https://github.com/ktos/Eleia/blob/master/trainingdata2.log)
 is a log of auto-training, SdcaLogisticRegressionBinary was decided with
-accuracy of 0.9585.
+accuracy of 0.9572.
 
 I was also running longer training sessions than 180 seconds, but still that
 algorithm was decided as the best, longer time had no visible impact.

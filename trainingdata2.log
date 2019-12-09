@@ -5,9 +5,96 @@ Exploring multiple ML algorithms and settings to find you the best model for ML 
 For further learning check: https://aka.ms/mlnet-cli
 |     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
 [Source=AutoML, Kind=Trace] Channel started
-[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
-Time expired before creating a model. Try increasing the exploration time from 10 seconds to a longer duration using the --max-exploration-time option. Learn about recommended training time at https://aka.ms/cli-trainingtime
-Exiting ...
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 1	0,941469817711043	00:00:08.6324607	xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+|1    AveragedPerceptronBinary               0,9415   0,9669   0,8376    0,8000       8,6          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 2	0,948848132023459	00:00:13.6941818	xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
+|2    SdcaLogisticRegressionBinary           0,9482   0,9841   0,9386    0,8214      13,7          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} tr=LightGbmBinary{}  cache=-
+[Source=AutoML, Kind=Trace] 3	0,950782410313589	00:00:29.7638745	xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} tr=LightGbmBinary{}  cache=-
+|3    LightGbmBinary                         0,9505   0,9520   0,9128    0,8525      29,8          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=SymbolicSgdLogisticRegressionBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 4	0,935403808279576	00:00:08.4699457	xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=SymbolicSgdLogisticRegressionBinary{}  cache=+
+|4    SymbolicSgdLogisticRegressionBinary    0,9378   0,9680   0,9070    0,8421       8,5          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=LinearSvmBinary{}  cache=+
+Inferring Columns ...
+Creating Data loader ...
+Loading data ...
+Exploring multiple ML algorithms and settings to find you the best model for ML task: binary-classification
+For further learning check: https://aka.ms/mlnet-cli
+|     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
+[Source=AutoML, Kind=Trace] Channel started
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 1	0,92990300944011	00:00:08.1731553	xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+|1    AveragedPerceptronBinary               0,9275   0,9479   0,8829    0,7742       8,2          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 2	0,948848132023459	00:00:13.2947278	xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
+|2    SdcaLogisticRegressionBinary           0,9482   0,9841   0,9386    0,8214      13,3          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} tr=LightGbmBinary{}  cache=-
+
+===============================================Experiment Results=================================================
+------------------------------------------------------------------------------------------------------------------
+|                                                     Summary                                                    |
+------------------------------------------------------------------------------------------------------------------
+|ML Task: binary-classification                                                                                  |
+|Dataset: trainingdata2.tsv                                                                                      |
+|Label : 0                                                                                                       |
+|Total experiment time : 30,60 Secs                                                                              |
+|Total number of models explored: 2                                                                              |
+------------------------------------------------------------------------------------------------------------------
+|                                              Top 2 models explored                                             |
+------------------------------------------------------------------------------------------------------------------
+|     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
+|1    SdcaLogisticRegressionBinary           0,9482   0,9841   0,9386    0,8214      13,3          2             |
+|2    AveragedPerceptronBinary               0,9275   0,9479   0,8829    0,7742       8,2          1             |
+------------------------------------------------------------------------------------------------------------------
+Generated trained model for consumption: E:\Marcin\!Projekty\Eleia\tmp\SampleBinaryClassification\SampleBinaryClassification.Model\MLModel.zip
+Generated C# code for model consumption: E:\Marcin\!Projekty\Eleia\tmp\SampleBinaryClassification\SampleBinaryClassification.ConsoleApp
+Check out log file for more information: E:\Marcin\!Projekty\Eleia\tmp\SampleBinaryClassification\logs\debug_log.txt
+Inferring Columns ...
+Creating Data loader ...
+Loading data ...
+Exploring multiple ML algorithms and settings to find you the best model for ML task: binary-classification
+For further learning check: https://aka.ms/mlnet-cli
+|     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
+[Source=AutoML, Kind=Trace] Channel started
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 1	0,935413246479253	00:00:08.3046172	xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+|1    AveragedPerceptronBinary               0,9358   0,9544   0,8947    0,8182       8,3          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 2	0,948848132023459	00:00:13.4824350	xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
+|2    SdcaLogisticRegressionBinary           0,9482   0,9841   0,9386    0,8214      13,5          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} tr=LightGbmBinary{}  cache=-
+[Source=AutoML, Kind=Trace] 3	0,950782410313589	00:00:29.2573904	xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} tr=LightGbmBinary{}  cache=-
+|3    LightGbmBinary                         0,9505   0,9520   0,9128    0,8525      29,3          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=SymbolicSgdLogisticRegressionBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 4	0,93075200827201	00:00:08.2236469	xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=SymbolicSgdLogisticRegressionBinary{}  cache=+
+|4    SymbolicSgdLogisticRegressionBinary    0,9358   0,9519   0,9090    0,8286       8,2          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=Pierwszy_wynik_w_google__tf:Pierwszy_wynik_w_google_} xf=ColumnCopying{ col=Features:Pierwszy_wynik_w_google__tf} xf=Normalizing{ col=Features:Features} tr=LinearSvmBinary{}  cache=+
+
+===============================================Experiment Results=================================================
+------------------------------------------------------------------------------------------------------------------
+|                                                     Summary                                                    |
+------------------------------------------------------------------------------------------------------------------
+|ML Task: binary-classification                                                                                  |
+|Dataset: trainingdata2.tsv                                                                                      |
+|Label : 0                                                                                                       |
+|Total experiment time : 60,59 Secs                                                                              |
+|Total number of models explored: 4                                                                              |
+------------------------------------------------------------------------------------------------------------------
+|                                              Top 4 models explored                                             |
+------------------------------------------------------------------------------------------------------------------
+|     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
+|1    LightGbmBinary                         0,9505   0,9520   0,9128    0,8525      29,3          3             |
+|2    SdcaLogisticRegressionBinary           0,9482   0,9841   0,9386    0,8214      13,5          2             |
+|3    AveragedPerceptronBinary               0,9358   0,9544   0,8947    0,8182       8,3          1             |
+|4    SymbolicSgdLogisticRegressionBinary    0,9358   0,9519   0,9090    0,8286       8,2          4             |
+------------------------------------------------------------------------------------------------------------------
+Generated trained model for consumption: E:\Marcin\!Projekty\Eleia\tmp\SampleBinaryClassification\SampleBinaryClassification.Model\MLModel.zip
+Retrieving best pipeline ...
+Generated C# code for model consumption: E:\Marcin\!Projekty\Eleia\tmp\SampleBinaryClassification\SampleBinaryClassification.ConsoleApp
+Check out log file for more information: E:\Marcin\!Projekty\Eleia\tmp\SampleBinaryClassification\logs\debug_log.txt
 Inferring Columns ...
 Creating Data loader ...
 Loading data ...
@@ -16,9 +103,18 @@ For further learning check: https://aka.ms/mlnet-cli
 |     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
 [Source=AutoML, Kind=Trace] Channel started
 [Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
-[Source=AutoML, Kind=Trace] 1	0,9354598125518	00:00:13.8573576	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
-|1    AveragedPerceptronBinary               0,9330   0,9194   0,8495    0,8052      13,9          0             |
+[Source=AutoML, Kind=Trace] 1	0,94228461256824	00:00:08.2807485	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+|1    AveragedPerceptronBinary               0,9465   0,9352   0,8722    0,8077       8,3          0             |
 [Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 2	0,951553002034795	00:00:13.4604130	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
+|2    SdcaLogisticRegressionBinary           0,9572   0,9567   0,8803    0,8400      13,5          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} tr=LightGbmBinary{}  cache=-
+[Source=AutoML, Kind=Trace] 3	0,949105570086937	00:00:29.2662116	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} tr=LightGbmBinary{}  cache=-
+|3    LightGbmBinary                         0,9447   0,9766   0,9286    0,8286      29,3          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SymbolicSgdLogisticRegressionBinary{}  cache=+
+[Source=AutoML, Kind=Trace] 4	0,920855889311687	00:00:08.1802031	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SymbolicSgdLogisticRegressionBinary{}  cache=+
+|4    SymbolicSgdLogisticRegressionBinary    0,9223   0,9301   0,8093    0,7273       8,2          0             |
+[Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=LinearSvmBinary{}  cache=+
 
 ===============================================Experiment Results=================================================
 ------------------------------------------------------------------------------------------------------------------
@@ -27,19 +123,20 @@ For further learning check: https://aka.ms/mlnet-cli
 |ML Task: binary-classification                                                                                  |
 |Dataset: trainingdata2.tsv                                                                                      |
 |Label : code                                                                                                    |
-|Total experiment time : 30,91 Secs                                                                              |
-|Total number of models explored: 1                                                                              |
+|Total experiment time : 60,59 Secs                                                                              |
+|Total number of models explored: 4                                                                              |
 ------------------------------------------------------------------------------------------------------------------
-|                                              Top 1 models explored                                             |
+|                                              Top 4 models explored                                             |
 ------------------------------------------------------------------------------------------------------------------
 |     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
-|1    AveragedPerceptronBinary               0,9330   0,9194   0,8495    0,8052      13,9          1             |
+|1    SdcaLogisticRegressionBinary           0,9572   0,9567   0,8803    0,8400      13,5          2             |
+|2    AveragedPerceptronBinary               0,9465   0,9352   0,8722    0,8077       8,3          1             |
+|3    LightGbmBinary                         0,9447   0,9766   0,9286    0,8286      29,3          3             |
+|4    SymbolicSgdLogisticRegressionBinary    0,9223   0,9301   0,8093    0,7273       8,2          4             |
 ------------------------------------------------------------------------------------------------------------------
-Generated trained model for consumption: E:\Marcin\Temp\SampleBinaryClassification\SampleBinaryClassification.Model\MLModel.zip
-Retrieving best pipeline ...
-Generated C# code for model consumption: E:\Marcin\Temp\SampleBinaryClassification\SampleBinaryClassification.ConsoleApp
-Check out log file for more information: E:\Marcin\Temp\SampleBinaryClassification\logs\debug_log.txt
-Inferring Columns ...
+Generated trained model for consumption: E:\Marcin\!Projekty\Eleia\tmp\SampleBinaryClassification\SampleBinaryClassification.Model\MLModel.zip
+Generated C# code for model consumption: E:\Marcin\!Projekty\Eleia\tmp\SampleBinaryClassification\SampleBinaryClassification.ConsoleApp
+Check out log file for more information: E:\Marcin\!Projekty\Eleia\tmp\SampleBinaryClassification\logs\debug_log.txt
 Inferring Columns ...
 Creating Data loader ...
 Loading data ...
@@ -48,20 +145,20 @@ For further learning check: https://aka.ms/mlnet-cli
 |     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
 [Source=AutoML, Kind=Trace] Channel started
 [Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
-[Source=AutoML, Kind=Trace] 1	0,940796401281827	00:00:14.2387508	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
-|1    AveragedPerceptronBinary               0,9412   0,9354   0,8511    0,7925      14,2          0             |
+[Source=AutoML, Kind=Trace] 1	0,942887419445991	00:00:09.3781083	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=AveragedPerceptronBinary{}  cache=+
+|1    AveragedPerceptronBinary               0,9430   0,9505   0,8663    0,8533       9,4          0             |
 [Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
-[Source=AutoML, Kind=Trace] 2	0,954610388081555	00:00:22.0645359	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
-|2    SdcaLogisticRegressionBinary           0,9585   0,9780   0,9461    0,8732      22,1          0             |
+[Source=AutoML, Kind=Trace] 2	0,951995479910901	00:00:13.9627582	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SdcaLogisticRegressionBinary{}  cache=+
+|2    SdcaLogisticRegressionBinary           0,9572   0,9565   0,8801    0,8400      14,0          0             |
 [Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} tr=LightGbmBinary{}  cache=-
-[Source=AutoML, Kind=Trace] 3	0,951266133797984	00:00:42.1084700	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} tr=LightGbmBinary{}  cache=-
-|3    LightGbmBinary                         0,9493   0,9708   0,9250    0,8451      42,1          0             |
+[Source=AutoML, Kind=Trace] 3	0,949105570086937	00:00:37.0051141	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} tr=LightGbmBinary{}  cache=-
+|3    LightGbmBinary                         0,9447   0,9766   0,9286    0,8286      37,0          0             |
 [Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SymbolicSgdLogisticRegressionBinary{}  cache=+
-[Source=AutoML, Kind=Trace] 4	0,928144507360343	00:00:13.4418678	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SymbolicSgdLogisticRegressionBinary{}  cache=+
-|4    SymbolicSgdLogisticRegressionBinary    0,9275   0,9411   0,8545    0,7742      13,5          0             |
+[Source=AutoML, Kind=Trace] 4	0,932309170703717	00:00:08.6897502	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=SymbolicSgdLogisticRegressionBinary{}  cache=+
+|4    SymbolicSgdLogisticRegressionBinary    0,9275   0,9355   0,8209    0,7500       8,7          0             |
 [Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=LinearSvmBinary{}  cache=+
-[Source=AutoML, Kind=Trace] 5	0,925070505521871	00:00:13.0820072	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=LinearSvmBinary{}  cache=+
-|5    LinearSvmBinary                        0,9286   0,8960   0,7938    0,7949      13,1          0             |
+[Source=AutoML, Kind=Trace] 5	0,927638290723382	00:00:07.8570099	xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} xf=Normalizing{ col=Features:Features} tr=LinearSvmBinary{}  cache=+
+|5    LinearSvmBinary                        0,9248   0,9125   0,8307    0,7671       7,9          0             |
 [Source=AutoML, Kind=Trace] Evaluating pipeline xf=TextFeaturizing{ col=text_tf:text} xf=ColumnCopying{ col=Features:text_tf} tr=FastTreeBinary{}  cache=-
 
 ===============================================Experiment Results=================================================
@@ -71,18 +168,18 @@ For further learning check: https://aka.ms/mlnet-cli
 |ML Task: binary-classification                                                                                  |
 |Dataset: trainingdata2.tsv                                                                                      |
 |Label : code                                                                                                    |
-|Total experiment time : 180,89 Secs                                                                             |
+|Total experiment time : 180,57 Secs                                                                             |
 |Total number of models explored: 5                                                                              |
 ------------------------------------------------------------------------------------------------------------------
 |                                              Top 5 models explored                                             |
 ------------------------------------------------------------------------------------------------------------------
 |     Trainer                              Accuracy      AUC    AUPRC  F1-score  Duration #Iteration             |
-|1    SdcaLogisticRegressionBinary           0,9585   0,9780   0,9461    0,8732      22,1          2             |
-|2    LightGbmBinary                         0,9493   0,9708   0,9250    0,8451      42,1          3             |
-|3    AveragedPerceptronBinary               0,9412   0,9354   0,8511    0,7925      14,2          1             |
-|4    LinearSvmBinary                        0,9286   0,8960   0,7938    0,7949      13,1          5             |
-|5    SymbolicSgdLogisticRegressionBinary    0,9275   0,9411   0,8545    0,7742      13,5          4             |
+|1    SdcaLogisticRegressionBinary           0,9572   0,9565   0,8801    0,8400      14,0          2             |
+|2    LightGbmBinary                         0,9447   0,9766   0,9286    0,8286      37,0          3             |
+|3    AveragedPerceptronBinary               0,9430   0,9505   0,8663    0,8533       9,4          1             |
+|4    SymbolicSgdLogisticRegressionBinary    0,9275   0,9355   0,8209    0,7500       8,7          4             |
+|5    LinearSvmBinary                        0,9248   0,9125   0,8307    0,7671       7,9          5             |
 ------------------------------------------------------------------------------------------------------------------
-Generated trained model for consumption: E:\Marcin\Temp\SampleBinaryClassification\SampleBinaryClassification.Model\MLModel.zip
-Generated C# code for model consumption: E:\Marcin\Temp\SampleBinaryClassification\SampleBinaryClassification.ConsoleApp
-Check out log file for more information: E:\Marcin\Temp\SampleBinaryClassification\logs\debug_log.txt
+Generated trained model for consumption: E:\Marcin\!Projekty\Eleia\tmp\SampleBinaryClassification\SampleBinaryClassification.Model\MLModel.zip
+Generated C# code for model consumption: E:\Marcin\!Projekty\Eleia\tmp\SampleBinaryClassification\SampleBinaryClassification.ConsoleApp
+Check out log file for more information: E:\Marcin\!Projekty\Eleia\tmp\SampleBinaryClassification\logs\debug_log.txt
