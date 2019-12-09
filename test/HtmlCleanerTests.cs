@@ -27,6 +27,16 @@ namespace Eleia.Test
         }
 
         [Fact]
+        public void RemoveQuotes_PostWithQuotes_QuotesRemoved()
+        {
+            string postText = "<blockquote>cytat</blockquote>nie cytat<blockquote>cytat</blockquote>";
+
+            var result = HtmlCleaner.RemoveQuotes(postText);
+
+            Assert.Equal("nie cytat", result);
+        }
+
+        [Fact]
         public void StripTags_TextWithTags_TagsRemoved()
         {
             string item = "<p>some</p><b>text</b><strong>with</strong><a href=\"#\">tags</a><br /><br/>";

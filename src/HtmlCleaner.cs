@@ -51,6 +51,17 @@ namespace Eleia
         }
 
         /// <summary>
+        /// Removes quotations, which should be ignored
+        /// </summary>
+        /// <param name="postText">Post content to be cleaned (in HTML)</param>
+        /// <returns>Post content with Blockquote elements removed</returns>
+        public static string RemoveQuotes(string postText)
+        {
+            postText = Regex.Replace(postText, "<blockquote>(.|\n)*?</blockquote>", "", RegexOptions.Multiline);
+            return postText;
+        }
+
+        /// <summary>
         /// Removes links to downloading attachements
         /// </summary>
         /// <param name="postText">Post content to be cleaned (in HTML)</param>

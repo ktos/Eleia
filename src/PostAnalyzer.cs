@@ -77,6 +77,7 @@ namespace Eleia
         {
             var text = HtmlCleaner.RemoveProperCode(post.text);
             text = HtmlCleaner.RemoveDownloadLinks(text);
+            text = HtmlCleaner.RemoveQuotes(text);
 
             foreach (var para in text.Split("</p>").Select(CleanParagraph))
             {
