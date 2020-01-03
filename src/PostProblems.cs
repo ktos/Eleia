@@ -38,6 +38,7 @@ namespace Eleia
     public abstract class PostProblems
     {
         public float Probability { get; set; }
+        public string Paragraph { get; set; }
     }
 
     /// <summary>
@@ -47,7 +48,7 @@ namespace Eleia
     {
         public override string ToString()
         {
-            return $"Potentially not formatted code found (prob: {Probability})";
+            return $"Potentially not formatted code found (prob: {Probability}) in: {Paragraph}";
         }
     }
 }

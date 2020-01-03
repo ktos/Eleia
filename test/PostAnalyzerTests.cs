@@ -119,9 +119,10 @@ namespace Eleia.Test
         [Fact]
         public void NotFormattedCodeFoundToString_WithValue_ShouldReturnProbabilityInText()
         {
-            var pp = new NotFormattedCodeFound { Probability = 0.123f };
+            var pp = new NotFormattedCodeFound { Probability = 0.123f, Paragraph = "lorem" };
 
             Assert.Contains("123", pp.ToString());
+            Assert.Contains("lorem", pp.ToString());
         }
     }
 }
