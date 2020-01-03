@@ -184,7 +184,7 @@ namespace Eleia
 
             if (problems.Count > 0)
             {
-                logger.LogInformation("Found problems in post {0}\n{1}\n{2}", post.id, post.url, post.text.Length < 50 ? post.text : post.text.Substring(0, 50));
+                logger.LogInformation("Found problems in post {0}\n{1}", post.id, post.url);
                 foreach (var item in problems)
                 {
                     logger.LogDebug(item.ToString());
