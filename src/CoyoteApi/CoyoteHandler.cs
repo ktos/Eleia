@@ -179,7 +179,8 @@ namespace Eleia.CoyoteApi
                 text = result.data.text,
                 topic_id = result.data.topic_id,
                 user = result.data.user,
-                user_name = result.data.user_name
+                user_name = result.data.user_name,
+                url = result.data.url
             };
 
             return post;
