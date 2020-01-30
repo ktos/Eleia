@@ -121,11 +121,11 @@ namespace Eleia.Test
         {
             Endpoints.IsDebug = true;
 
-            Assert.Contains("dev.4programmers.info", Endpoints.CommentPage);
-            Assert.Contains("dev.4programmers.info", Endpoints.LoginPage);
-            Assert.Contains("dev.4programmers.info", Endpoints.MainPage);
-            Assert.Contains("dev.4programmers.info", Endpoints.LogoutPage);
-            Assert.Contains("dev.4programmers.info", Endpoints.PostsApi);
+            Assert.Contains("4programmers.dev", Endpoints.CommentPage);
+            Assert.Contains("4programmers.dev", Endpoints.LoginPage);
+            Assert.Contains("4programmers.dev", Endpoints.MainPage);
+            Assert.Contains("4programmers.dev", Endpoints.LogoutPage);
+            Assert.Contains("4programmers.dev", Endpoints.PostsApi);
         }
     }
 }
