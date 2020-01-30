@@ -69,7 +69,7 @@ namespace Eleia.Test
             bot.IgnoreAlreadyAnalyzed = true;
             bot.LoadAlreadyAnalyzed();
 
-            await bot.AnalyzePostAsync(new Post() { id = 1, text = "" });
+            await bot.AnalyzePostAsync(new Post() { id = 1, html = "" });
 
             Assert.Single(bot.AlreadyAnalyzedDatabase);
             Assert.Equal(1, bot.AlreadyAnalyzedDatabase.First());
@@ -82,8 +82,8 @@ namespace Eleia.Test
             bot.IgnoreAlreadyAnalyzed = true;
             bot.LoadAlreadyAnalyzed();
 
-            await bot.AnalyzePostAsync(new Post() { id = 1, text = "one text" });
-            await bot.AnalyzePostAsync(new Post() { id = 1, text = "different text" });
+            await bot.AnalyzePostAsync(new Post() { id = 1, html = "one text" });
+            await bot.AnalyzePostAsync(new Post() { id = 1, html = "different text" });
 
             var logs = GetFakeLogs();
 
@@ -98,7 +98,7 @@ namespace Eleia.Test
             bot.LoadAlreadyAnalyzed();
             bot.BlacklistDefinition = "1";
 
-            await bot.AnalyzePostAsync(new Post() { id = 1, text = "", forum_id = 1 });
+            await bot.AnalyzePostAsync(new Post() { id = 1, html = "", forum_id = 1 });
             var logs = GetFakeLogs();
 
             Assert.Equal("[Debug] Ignoring post 1 because of blacklist", logs.Last());
@@ -121,11 +121,11 @@ namespace Eleia.Test
         {
             Endpoints.IsDebug = true;
 
-            Assert.Contains("dev.4programmers.info", Endpoints.CommentPage);
-            Assert.Contains("dev.4programmers.info", Endpoints.LoginPage);
-            Assert.Contains("dev.4programmers.info", Endpoints.MainPage);
-            Assert.Contains("dev.4programmers.info", Endpoints.LogoutPage);
-            Assert.Contains("dev.4programmers.info", Endpoints.PostsApi);
+            Assert.Contains("4programmers.dev", Endpoints.CommentPage);
+            Assert.Contains("4programmers.dev", Endpoints.LoginPage);
+            Assert.Contains("4programmers.dev", Endpoints.MainPage);
+            Assert.Contains("4programmers.dev", Endpoints.LogoutPage);
+            Assert.Contains("4programmers.dev", Endpoints.PostsApi);
         }
     }
 }

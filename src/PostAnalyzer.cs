@@ -76,7 +76,7 @@ namespace Eleia
 
         private NotFormattedCodeFound CheckForUnformattedCode(CoyoteApi.Post post)
         {
-            var text = HtmlCleaner.RemoveProperCode(post.text);
+            var text = HtmlCleaner.RemoveProperCode(post.html);
             text = HtmlCleaner.RemoveDownloadLinks(text);
             text = HtmlCleaner.RemoveQuotes(text);
 

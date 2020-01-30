@@ -41,26 +41,26 @@ namespace Eleia.CoyoteApi
         /// <summary>
         /// Coyote API endpoint for getting new posts
         /// </summary>
-        public static string PostsApi => IsDebug ? "http://api.dev.4programmers.info/v1/posts" : "https://api.4programmers.net/v1/posts";
+        public static string PostsApi => IsDebug ? "http://api.4programmers.dev/v1/posts" : "https://api.4programmers.net/v1/posts";
 
         /// <summary>
         /// Coyote URL for main page
         /// </summary>
-        public static string MainPage => IsDebug ? "http://dev.4programmers.info/" : "https://4programmers.net";
+        public static string MainPage => IsDebug ? "http://4programmers.dev/" : "https://4programmers.net";
 
         /// <summary>
         /// Coyote URL for login page
         /// </summary>
-        public static string LoginPage => IsDebug ? "http://dev.4programmers.info/Login" : "https://4programmers.net/Login";
+        public static string LoginPage => IsDebug ? "http://4programmers.dev/Login" : "https://4programmers.net/Login";
 
         /// <summary>
         /// Coyote URL for comment to a post link
         /// </summary>
-        public static string CommentPage => IsDebug ? "http://dev.4programmers.info/Forum/Comment" : "https://4programmers.net/Forum/Comment";
+        public static string CommentPage => IsDebug ? "http://4programmers.dev/Forum/Comment" : "https://4programmers.net/Forum/Comment";
 
         /// <summary>
         /// Coyote URL to logout link
         /// </summary>
-        public static string LogoutPage => IsDebug ? "http://dev.4programmers.info/Logout" : "https://4programmers.net/Logout";
+        public static string LogoutPage => IsDebug ? "http://4programmers.dev/Logout" : "https://4programmers.net/Logout";
     }
 }
