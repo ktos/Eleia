@@ -173,14 +173,14 @@ namespace Eleia.CoyoteApi
 
             var post = new Post
             {
-                created_at = result.data.created_at,
-                forum_id = result.data.forum_id,
-                id = result.data.id,
-                text = result.data.text,
-                topic_id = result.data.topic_id,
-                user = result.data.user,
-                user_name = result.data.user_name,
-                url = result.data.url
+                created_at = result.created_at,
+                forum_id = result.forum_id,
+                id = result.id,
+                html = result.html,
+                topic_id = result.topic_id,
+                user = result.user,
+                user_name = result.user_name,
+                url = result.url
             };
 
             return post;

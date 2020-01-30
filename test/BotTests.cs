@@ -69,7 +69,7 @@ namespace Eleia.Test
             bot.IgnoreAlreadyAnalyzed = true;
             bot.LoadAlreadyAnalyzed();
 
-            await bot.AnalyzePostAsync(new Post() { id = 1, text = "" });
+            await bot.AnalyzePostAsync(new Post() { id = 1, html = "" });
 
             Assert.Single(bot.AlreadyAnalyzedDatabase);
             Assert.Equal(1, bot.AlreadyAnalyzedDatabase.First());
@@ -82,8 +82,8 @@ namespace Eleia.Test
             bot.IgnoreAlreadyAnalyzed = true;
             bot.LoadAlreadyAnalyzed();
 
-            await bot.AnalyzePostAsync(new Post() { id = 1, text = "one text" });
-            await bot.AnalyzePostAsync(new Post() { id = 1, text = "different text" });
+            await bot.AnalyzePostAsync(new Post() { id = 1, html = "one text" });
+            await bot.AnalyzePostAsync(new Post() { id = 1, html = "different text" });
 
             var logs = GetFakeLogs();
 
@@ -98,7 +98,7 @@ namespace Eleia.Test
             bot.LoadAlreadyAnalyzed();
             bot.BlacklistDefinition = "1";
 
-            await bot.AnalyzePostAsync(new Post() { id = 1, text = "", forum_id = 1 });
+            await bot.AnalyzePostAsync(new Post() { id = 1, html = "", forum_id = 1 });
             var logs = GetFakeLogs();
 
             Assert.Equal("[Debug] Ignoring post 1 because of blacklist", logs.Last());

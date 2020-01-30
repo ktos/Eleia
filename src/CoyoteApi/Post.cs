@@ -47,12 +47,6 @@ namespace Eleia.CoyoteApi
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class SinglePostApiResult
     {
-        public SinglePost data { get; set; }
-    }
-
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class SinglePost
-    {
         public int id { get; set; }
         public object user_name { get; set; }
         public int score { get; set; }
@@ -61,7 +55,7 @@ namespace Eleia.CoyoteApi
         public int topic_id { get; set; }
         public DateTime created_at { get; set; }
         public User user { get; set; }
-        public string text { get; set; }
+        public string html { get; set; }
         public string url { get; set; }
         public IEnumerable<Comment> comments { get; set; }
     }
@@ -90,7 +84,7 @@ namespace Eleia.CoyoteApi
         public int topic_id { get; set; }
         public DateTime created_at { get; set; }
         public User user { get; set; }
-        public string text { get; set; }
+        public string html { get; set; }
         public string url { get; set; }
     }
 
