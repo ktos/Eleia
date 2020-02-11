@@ -51,13 +51,14 @@ namespace Eleia
         }
 
         /// <summary>
-        /// Removes quotations, which should be ignored
+        /// Removes quotations, lists and other HTML tags which content should be ignored
         /// </summary>
         /// <param name="postText">Post content to be cleaned (in HTML)</param>
         /// <returns>Post content with Blockquote elements removed</returns>
-        public static string RemoveQuotes(string postText)
+        public static string RemoveHTMLContent(string postText)
         {
             postText = Regex.Replace(postText, "<blockquote>(.|\n)*?</blockquote>", "", RegexOptions.Multiline);
+            postText = Regex.Replace(postText, "<ul>(.|\n)*?</ul>", "", RegexOptions.Multiline);
             return postText;
         }
 

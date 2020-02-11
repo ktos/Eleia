@@ -27,13 +27,23 @@ namespace Eleia.Test
         }
 
         [Fact]
-        public void RemoveQuotes_PostWithQuotes_QuotesRemoved()
+        public void RemoveHtmlContent_PostWithQuotes_QuotesRemoved()
         {
             string postText = "<blockquote>cytat</blockquote>nie cytat<blockquote>cytat</blockquote>";
 
-            var result = HtmlCleaner.RemoveQuotes(postText);
+            var result = HtmlCleaner.RemoveHTMLContent(postText);
 
             Assert.Equal("nie cytat", result);
+        }
+
+        [Fact]
+        public void RemoveHtmlContent_PostWithList_ListRemoved()
+        {
+            string postText = "<ul>\n<li>\n<p>libGDX</p>\n</li>\n<li>\n<p>jMonkeyEngine</p>\n</li>\n<li>\n<p>lwjgl</p>\n</li>\n</ul>";
+
+            var result = HtmlCleaner.RemoveHTMLContent(postText);
+
+            Assert.Equal(string.Empty, result);
         }
 
         [Fact]
