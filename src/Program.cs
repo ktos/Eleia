@@ -102,23 +102,46 @@ namespace Eleia
 
             if (isRunSet)
             {
-                bot.AnalyzePostsByIdsAsync(runSet).Wait();
+                try
+                {
+                    bot.AnalyzePostsByIdsAsync(runSet).Wait();
+                }
+                catch (AggregateException e)
+                {
+                    logger.LogError($"HTTP Exception: {e.Message}");
+                }
                 return;
             }
 
             if (isRunOnce)
             {
-                bot.AnalyzeNewPostsAsync().Wait();
-                logger.LogDebug("Single run completed.");
+                try
+                {
+                    bot.AnalyzeNewPostsAsync().Wait();
+                    logger.LogDebug("Single run completed.");
+                }
+                catch (AggregateException e)
+                {
+                    logger.LogError($"HTTP Exception: {e.Message}");
+                }
             }
             else
             {
                 while (true)
                 {
-                    bot.AnalyzeNewPostsAsync().Wait();
-                    logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
-
-                    Task.Delay(TimeSpan.FromMinutes(timeBetweenUpdates)).Wait();
+                    try
+                    {
+                        bot.AnalyzeNewPostsAsync().Wait();
+                    }
+                    catch (AggregateException e)
+                    {
+                        logger.LogError($"HTTP Exception: {e.Message}");
+                    }
+                    finally
+                    {
+                        logger.LogDebug("Going to sleep for {0} minutes", timeBetweenUpdates);
+                        Task.Delay(TimeSpan.FromMinutes(timeBetweenUpdates)).Wait();
+                    }
                 }
             }
 
