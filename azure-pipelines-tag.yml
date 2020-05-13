@@ -38,8 +38,7 @@ steps:
   inputs:
     codeCoverageTool: 'Cobertura'
     summaryFileLocation: '$(Agent.TempDirectory)/*/coverage.cobertura.xml'
-    pathToSources: 'src/'
-    reportDirectory: 'report/'
+    pathToSources: 'src/'    
 
 - script: dotnet publish src/*.csproj --configuration $(buildConfiguration) -o $(Build.BinariesDirectory) /p:Version=$(GitVersion.SemVer) /p:InformationalVersion=$(GitVersion.FullSemVer) -r win-x64
   displayName: Publish win-x64
