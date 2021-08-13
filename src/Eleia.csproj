@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.34" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.36" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
     <PackageReference Include="Microsoft.ML" Version="1.6.0" />    
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
