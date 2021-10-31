@@ -177,9 +177,10 @@ namespace Eleia.CoyoteApi
                 forum_id = result.forum_id,
                 id = result.id,
                 html = result.html,
+                text = result.text,
                 topic_id = result.topic_id,
                 user = result.user,
-                user_name = result.user_name,
+                user_name = result.user.name,
                 url = result.url
             };
 

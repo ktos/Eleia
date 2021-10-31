@@ -31,6 +31,7 @@
 
 using Eleia.CoyoteApi;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -48,6 +49,7 @@ namespace Eleia
         private readonly PostAnalyzer postAnalyzer;
         private readonly Blacklist blacklist;
         private readonly ILogger logger;
+        private readonly ILogger logger2;
 
         /// <summary>
         /// Database with already analyzed post ids
@@ -98,6 +100,7 @@ namespace Eleia
             postAnalyzer = analyzer;
             blacklist = list;
             logger = loggerFactory.CreateLogger("Bot");
+            logger2 = loggerFactory.CreateLogger("Analyzer2");
         }
 
         /// <summary>
@@ -181,6 +184,11 @@ namespace Eleia
 
             logger.LogInformation("Analyzing post {0}", post.id);
             var problems = postAnalyzer.Analyze(post);
+
+            logger2.LogDebug("{0} {1}", post.id, post.text);
+            var analysis2 = postAnalyzer.AnalyzeText(post);
+            if (analysis2.Prediction)
+                logger2.LogWarning(JsonConvert.SerializeObject(analysis2));
 
             if (problems.Count > 0)
             {
