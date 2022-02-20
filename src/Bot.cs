@@ -61,6 +61,8 @@ namespace Eleia
         /// </summary>
         public bool IgnoreAlreadyAnalyzed { get; set; }
 
+        public bool DisplayPrediction { get; set; }
+
         /// <summary>
         /// Gets or sets the path to the already analyzed posts database
         /// </summary>
@@ -187,7 +189,7 @@ namespace Eleia
 
             logger2.LogDebug("{0} {1}", post.id, post.text);
             var analysis2 = postAnalyzer.AnalyzeText(post);
-            if (analysis2.Prediction)
+            if (analysis2.Prediction || DisplayPrediction)
                 logger2.LogWarning(JsonConvert.SerializeObject(analysis2));
 
             if (problems.Count > 0)
