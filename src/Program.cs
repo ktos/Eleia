@@ -87,6 +87,9 @@ namespace Eleia
 
             [Option("ignoreAlreadyAnalyzed", HelpText = "Ignores already analyzed posts database.", Required = false, Default = false)]
             public bool IgnoreAlreadyAnalyzed { get; set; }
+
+            [Option("displayPrediction", HelpText = "Always displays prediction value in logs.", Required = false, Default = false)]
+            public bool DisplayPrediction { get; set; }
         }
 
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -112,6 +115,8 @@ namespace Eleia
                 }
                 return;
             }
+
+
 
             if (isRunOnce)
             {
@@ -221,6 +226,7 @@ namespace Eleia
                 bot.BlacklistDefinition = blacklistDefinition;
 
             bot.IgnoreAlreadyAnalyzed = opts.IgnoreAlreadyAnalyzed;
+            bot.DisplayPrediction = opts.DisplayPrediction;
 
             isConfigured = true;
         }
