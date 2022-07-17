@@ -49,7 +49,6 @@ namespace Eleia
         private readonly PostAnalyzer postAnalyzer;
         private readonly Blacklist blacklist;
         private readonly ILogger logger;
-        private readonly ILogger logger2;
 
         /// <summary>
         /// Database with already analyzed post ids
@@ -102,7 +101,6 @@ namespace Eleia
             postAnalyzer = analyzer;
             blacklist = list;
             logger = loggerFactory.CreateLogger("Bot");
-            logger2 = loggerFactory.CreateLogger("Analyzer2");
         }
 
         /// <summary>
@@ -185,25 +183,16 @@ namespace Eleia
             }
 
             logger.LogInformation("Analyzing post {0}", post.id);
-            var problems = postAnalyzer.Analyze(post);
+            var analysisResult = postAnalyzer.AnalyzeText(post);
 
-            logger2.LogDebug("{0} {1}", post.id, post.text);
-            var analysis2 = postAnalyzer.AnalyzeText(post);
-            if (analysis2.Prediction || DisplayPrediction)
-                logger2.LogWarning(JsonConvert.SerializeObject(analysis2));
-
-            if (problems.Count > 0)
+            if (analysisResult.Prediction)
             {
-                logger.LogInformation("Found problems in post {0}\n{1}", post.id, post.url);
-                foreach (var item in problems)
-                {
-                    logger.LogDebug(item.ToString());
+                logger.LogWarning("Found problems in post {0} {1} -- {2}", post.id, post.url, analysisResult.Item);
 
-                    if (PostComments)
-                    {
-                        logger.LogInformation("Posting comment");
-                        await coyoteHandler.PostComment(post, string.Format(NagMessage, item.Probability)).ConfigureAwait(false);
-                    }
+                if (PostComments)
+                {
+                    logger.LogDebug("Posting comment");
+                    await coyoteHandler.PostComment(post, string.Format(NagMessage, analysisResult.Probability)).ConfigureAwait(false);
                 }
             }
         }

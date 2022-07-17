@@ -59,10 +59,28 @@ namespace Eleia
         /// <returns>Post content with Blockquote elements removed</returns>
         public static string RemoveMarkdownContent(string postText)
         {
-            postText = Regex.Replace(postText, "![(.*)]\\(.*\\)", "", RegexOptions.Multiline);
+            // removing quotes
+            postText = Regex.Replace(postText, ">(.*?)\n", "");
+
+            // removing lists
+            postText = Regex.Replace(postText, "\\*(.*?)\n", "");
+            postText = Regex.Replace(postText, "\\*(.*?)$", "");
+
+            // removing images
+            postText = Regex.Replace(postText, "!\\[(.*?)\\]\\(.*?\\)", "", RegexOptions.Multiline);
+
+            // removing unformatted links
+            postText = Regex.Replace(postText, "https:\\/\\/(.*?) ", "", RegexOptions.Multiline);
+            postText = Regex.Replace(postText, "https:\\/\\/(.*)$", "", RegexOptions.Multiline);
+            postText = Regex.Replace(postText, "http:\\/\\/(.*?) ", "", RegexOptions.Multiline);
+            postText = Regex.Replace(postText, "http:\\/\\/(.*)$", "", RegexOptions.Multiline);
             return postText;
         }
 
+        /// <summary>
+        /// Removes all already marked code as well as some Markdown content from the post body
+        /// and then divides everything into a list of lines, which can be analyzed
+        /// </summary>
         public static IEnumerable<string> PrepareBody(string body)
         {
             body = RemoveProperCode(body);

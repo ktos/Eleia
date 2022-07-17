@@ -58,21 +58,6 @@ namespace Eleia
             codeDetector = new CodeDetector();
         }
 
-        /// <summary>
-        /// Analyzes a single post in search of problems
-        /// </summary>
-        /// <param name="post">Post to be analyzed, in the form of object from the API</param>
-        /// <returns>List of possible problems found, with their probabilities</returns>
-        public List<PostProblems> Analyze(CoyoteApi.Post post)
-        {
-            var output = new List<PostProblems>();
-            var unformatted = CheckForUnformattedCode(post);
-
-            if (unformatted != null) output.Add(unformatted);
-
-            return output;
-        }
-
         public class TextAnalysisResult
         {
             public bool Prediction { get; set; }
@@ -95,38 +80,13 @@ namespace Eleia
             {
                 var predictionResult = codeDetector.Predict(item);
 
-                if (predictionResult.Prediction)
+                if (predictionResult.Prediction && predictionResult.Probability > codeDetectorTreshold)
                 {
                     return new TextAnalysisResult { Prediction = true, Probability = predictionResult.Probability, Item = item };
                 }
             }
 
             return new TextAnalysisResult { Prediction = false };
-        }
-
-        private NotFormattedCodeFound CheckForUnformattedCode(CoyoteApi.Post post)
-        {
-            var text = HtmlCleaner.RemoveProperCode(post.html);
-            text = HtmlCleaner.RemoveDownloadLinks(text);
-            text = HtmlCleaner.RemoveHTMLContent(text);
-
-            foreach (var para in text.Split("</p>").Select(CleanParagraph))
-            {
-                var result = codeDetector.Predict(para);
-
-                if (result.Prediction && result.Probability > codeDetectorTreshold)
-                {
-                    return new NotFormattedCodeFound { Probability = result.Probability, Paragraph = para };
-                }
-            }
-
-            return null;
-        }
-
-        private string CleanParagraph(string item)
-        {
-            var cleaned = HtmlCleaner.StripTags(item);
-            return HtmlCleaner.StripWhitespace(cleaned);
         }
     }
 }
