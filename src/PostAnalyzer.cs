@@ -31,7 +31,6 @@
 
 using Eleia.ML;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -72,6 +71,37 @@ namespace Eleia
             if (unformatted != null) output.Add(unformatted);
 
             return output;
+        }
+
+        public class TextAnalysisResult
+        {
+            public bool Prediction { get; set; }
+            public double Probability { get; set; }
+
+            public string Item { get; set; }
+        }
+
+        /// <summary>
+        /// Analyzes a single post in search of problems, based on text (not HTML) content
+        /// </summary>
+        /// <param name="post">Post to be analyzed, in the form of object from the API</param>
+        /// <returns>List of possible problems found, with their probabilities</returns>
+        public TextAnalysisResult AnalyzeText(CoyoteApi.Post post)
+        {
+            var output = new List<PostProblems>();
+            var body = TextCleaner.PrepareBody(post.text);
+
+            foreach (var item in body)
+            {
+                var predictionResult = codeDetector.Predict(item);
+
+                if (predictionResult.Prediction)
+                {
+                    return new TextAnalysisResult { Prediction = true, Probability = predictionResult.Probability, Item = item };
+                }
+            }
+
+            return new TextAnalysisResult { Prediction = false };
         }
 
         private NotFormattedCodeFound CheckForUnformattedCode(CoyoteApi.Post post)

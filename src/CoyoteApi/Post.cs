@@ -48,16 +48,18 @@ namespace Eleia.CoyoteApi
     public class SinglePostApiResult
     {
         public int id { get; set; }
-        public object user_name { get; set; }
+        public string user_name { get; set; }
         public int score { get; set; }
         public int edit_count { get; set; }
         public int forum_id { get; set; }
         public int topic_id { get; set; }
         public DateTime created_at { get; set; }
-        public User user { get; set; }
+        public string text { get; set; }
+        public string excerpt { get; set; }
         public string html { get; set; }
         public string url { get; set; }
-        public IEnumerable<Comment> comments { get; set; }
+        public User user { get; set; }
+        public Comment[] comments { get; set; }
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
@@ -77,15 +79,18 @@ namespace Eleia.CoyoteApi
     public class Post
     {
         public int id { get; set; }
-        public object user_name { get; set; }
+        public string user_name { get; set; }
         public int score { get; set; }
         public int edit_count { get; set; }
         public int forum_id { get; set; }
         public int topic_id { get; set; }
         public DateTime created_at { get; set; }
-        public User user { get; set; }
+        public string text { get; set; }
+        public string excerpt { get; set; }
         public string html { get; set; }
         public string url { get; set; }
+        public User user { get; set; }
+        public Comment[] comments { get; set; }
     }
 
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
