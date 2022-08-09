@@ -68,14 +68,14 @@ steps:
     archiveType: zip
     archiveFile: '$(Build.ArtifactStagingDirectory)/Eleia-$(GitVersion.SemVer)-linux.zip'
 
-- task: PublishBuildArtifacts@1
+- task: PublishBuildArtifacts@1.200.0
   displayName: 'Publish Artifact'
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/Eleia-$(GitVersion.SemVer)-win.zip'
     ArtifactName: 'drop'
     publishLocation: 'Container'
 
-- task: PublishBuildArtifacts@1
+- task: PublishBuildArtifacts@1.200.0
   displayName: 'Publish Artifact'
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/Eleia-$(GitVersion.SemVer)-linux.zip'
@@ -105,7 +105,7 @@ steps:
    gzip $(Build.ArtifactStagingDirectory)/eleia-docker-$(GitVersion.SemVer).tar   
   displayName: 'Saving Docker Image'
 
-- task: PublishBuildArtifacts@1
+- task: PublishBuildArtifacts@1.200.0
   displayName: 'Publish Artifact'
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/eleia-docker-$(GitVersion.SemVer).tar.gz'
