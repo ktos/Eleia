@@ -48,7 +48,7 @@ steps:
 - script: dotnet publish src/*.csproj --configuration $(buildConfiguration) -o $(Build.BinariesDirectory) /p:Version=$(GitVersion.SemVer) /p:InformationalVersion=$(GitVersion.FullSemVer) -r win-x64
   displayName: Publish win-x64
 
-- task: ArchiveFiles@2
+- task: ArchiveFiles@2.211.0
   displayName: 'Archive $(Build.ArtifactStagingDirectory)'
   inputs:
     includeRootFolder: false
@@ -61,7 +61,7 @@ steps:
 - script: dotnet publish src/*.csproj --configuration $(buildConfiguration) -o $(Build.BinariesDirectory) /p:Version=$(GitVersion.SemVer) /p:InformationalVersion=$(GitVersion.FullSemVer) -r linux-x64
   displayName: Publish linux-x64
 
-- task: ArchiveFiles@2
+- task: ArchiveFiles@2.211.0
   displayName: 'Archive $(Build.ArtifactStagingDirectory)'
   inputs:
     includeRootFolder: false
