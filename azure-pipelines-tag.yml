@@ -88,7 +88,7 @@ steps:
 - script: dotnet publish src/*.csproj --configuration $(buildConfiguration) -o $(Build.BinariesDirectory) /p:Version=$(GitVersion.SemVer) /p:InformationalVersion=$(GitVersion.FullSemVer) -r linux-musl-x64
   displayName: Publish linux-musl-x64
 
-- task: Docker@2
+- task: Docker@2.212.1
   displayName: 'Build Docker Image'
   inputs:
     containerRegistry: 'dcr.ktos.dev Docker Registry'
