@@ -239,3 +239,8 @@ _Pvt_Extensions
 /**/coverage.*
 lcov.info
 /report
+analyzed.bin
+scripts/
+Eleia.sln
+src/Properties/launchSettings.json
+Eleia.GetTrainingData/
