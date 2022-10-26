@@ -72,8 +72,7 @@ namespace Eleia
         /// <param name="post">Post to be analyzed, in the form of object from the API</param>
         /// <returns>List of possible problems found, with their probabilities</returns>
         public TextAnalysisResult AnalyzeText(CoyoteApi.Post post)
-        {
-            var output = new List<PostProblems>();
+        {            
             var body = TextCleaner.PrepareBody(post.text);
 
             foreach (var item in body)

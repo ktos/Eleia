@@ -52,6 +52,8 @@ namespace Eleia
 
         /// <summary>
         /// Database with already analyzed post ids
+        /// A set of post ids which have been already analyzed so they won't
+        /// be analyzed again
         /// </summary>
         public HashSet<int> AlreadyAnalyzedDatabase { get; set; }
 
@@ -85,7 +87,11 @@ namespace Eleia
         public string BlacklistDefinition
         {
             get { return blacklistDefinition; }
-            set { blacklistDefinition = value; blacklist.UpdateDefinition(value); }
+            set
+            {
+                blacklistDefinition = value;
+                blacklist.UpdateDefinition(value);
+            }
         }
 
         /// <summary>
@@ -95,7 +101,12 @@ namespace Eleia
         /// <param name="analyzer">PostAnalyzer for analyzing posts</param>
         /// <param name="list">Blacklist for blacklisting forums, posts or so on</param>
         /// <param name="loggerFactory">LoggerFactory for login purposes</param>
-        public Bot(CoyoteHandler handler, PostAnalyzer analyzer, Blacklist list, ILoggerFactory loggerFactory)
+        public Bot(
+            CoyoteHandler handler,
+            PostAnalyzer analyzer,
+            Blacklist list,
+            ILoggerFactory loggerFactory
+        )
         {
             coyoteHandler = handler;
             postAnalyzer = analyzer;
@@ -155,7 +166,11 @@ namespace Eleia
         /// <param name="postIds">A list of post ids to analyze</param>
         public async Task AnalyzePostsByIdsAsync(int[] postIds)
         {
-            foreach (var item in postIds.Select(async x => await coyoteHandler.GetSinglePost(x).ConfigureAwait(false)))
+            foreach (
+                var item in postIds.Select(
+                    async x => await coyoteHandler.GetSinglePost(x).ConfigureAwait(false)
+                )
+            )
             {
                 await AnalyzePostAsync(item.Result).ConfigureAwait(false);
             }
@@ -187,12 +202,19 @@ namespace Eleia
 
             if (analysisResult.Prediction)
             {
-                logger.LogWarning("Found problems in post {0} {1} -- {2}", post.id, post.url, analysisResult.Item);
+                logger.LogWarning(
+                    "Found problems in post {0} {1} -- {2}",
+                    post.id,
+                    post.url,
+                    analysisResult.Item
+                );
 
                 if (PostComments)
                 {
                     logger.LogDebug("Posting comment");
-                    await coyoteHandler.PostComment(post, string.Format(NagMessage, analysisResult.Probability)).ConfigureAwait(false);
+                    await coyoteHandler
+                        .PostComment(post, string.Format(NagMessage, analysisResult.Probability))
+                        .ConfigureAwait(false);
                 }
             }
         }
