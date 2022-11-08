@@ -30,6 +30,7 @@
 #endregion License
 
 using Eleia.CoyoteApi;
+using MessagePack;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -132,16 +133,16 @@ namespace Eleia
             else
             {
                 logger.LogDebug("Loading already analyzed posts database.");
-                using var fs = new FileStream(AnalyzedDatabasePath, FileMode.Open, FileAccess.Read);
-                if (fs.Length == 0)
+                
+                if (!File.Exists(AnalyzedDatabasePath))
                 {
                     AlreadyAnalyzedDatabase = new HashSet<int>();
                     return;
                 }
                 else
                 {
-                    var formatter = new BinaryFormatter();
-                    AlreadyAnalyzedDatabase = formatter.Deserialize(fs) as HashSet<int>;
+                    var bytes = File.ReadAllBytes(AnalyzedDatabasePath);
+                    AlreadyAnalyzedDatabase = MessagePackSerializer.Deserialize<HashSet<int>>(bytes);
                 }
             }
         }
@@ -153,11 +154,11 @@ namespace Eleia
         {
             if (IgnoreAlreadyAnalyzed)
                 return;
-
-            using var fs = new FileStream(AnalyzedDatabasePath, FileMode.Create, FileAccess.Write);
+            
             logger.LogDebug("Saving already analyzed ids database.");
-            var formatter = new BinaryFormatter();
-            formatter.Serialize(fs, AlreadyAnalyzedDatabase);
+
+            byte[] bytes = MessagePackSerializer.Serialize(AlreadyAnalyzedDatabase);
+            File.WriteAllBytes(AnalyzedDatabasePath, bytes);            
         }
 
         /// <summary>
